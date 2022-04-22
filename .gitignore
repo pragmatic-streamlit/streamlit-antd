@@ -162,7 +162,6 @@ store-block.db
 
 *.webm
 
-src/
 
 # dis module peoperties
 dis_prop/

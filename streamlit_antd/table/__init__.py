@@ -24,10 +24,13 @@ def st_antd_table(df, row_key=None,
         custom_columns_width=None,
         default_column_width=140,
         tags_columns=None,
+        sorter_columns=None,
         actions=None,
         action_width=200,
         min_height=200,
         key=None):
+    sorter_columns = sorter_columns or list(df.columns) 
+    tags_columns = tags_columns or ['tags']
     if 'id' not in list(df.columns) and not row_key:
         df = df.reset_index()
         df = df.rename(columns={"index":"id"})
@@ -54,7 +57,7 @@ def st_antd_table(df, row_key=None,
             }
             columns.append(column)
     component_value = _component_func(data=data, columns=columns, actions=actions, 
-        row_key=row_key, min_height=min_height, tags_columns=tags_columns,
+        row_key=row_key, min_height=min_height, tags_columns=tags_columns, sorter_columns=sorter_columns,
         action_width=action_width, key=key, default=None)
     action_id = component_value and component_value.get('action_id')
     if action_id:
@@ -103,7 +106,6 @@ if _DEVELOP_MODE:
         hidden_columns=['a'],
         fixed_left_columns=['name'],
         fixed_right_columns=['createdAt'],
-        tags_columns=['tags'],
         custom_columns_width={'name': 150, 'tags': 200},
         actions=['Delete', 'Edit'],
         key='addd')
