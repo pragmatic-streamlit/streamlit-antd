@@ -22,7 +22,8 @@ def st_antd_table(df, row_key=None,
         fixed_left_columns=None, 
         fixed_right_columns=None,
         custom_columns_width=None,
-        default_column_width=120,
+        default_column_width=140,
+        tags_columns=None,
         actions=None,
         action_width=200,
         min_height=200,
@@ -53,7 +54,7 @@ def st_antd_table(df, row_key=None,
             }
             columns.append(column)
     component_value = _component_func(data=data, columns=columns, actions=actions, 
-        row_key=row_key, min_height=min_height,
+        row_key=row_key, min_height=min_height, tags_columns=tags_columns,
         action_width=action_width, key=key, default=None)
     action_id = component_value and component_value.get('action_id')
     if action_id:
@@ -72,16 +73,16 @@ def st_antd_table(df, row_key=None,
 if _DEVELOP_MODE:
     import streamlit as st
     st.set_page_config(layout="wide")
-    items = [{"Label": "Home", "Other": "OtherValue"}, {"Label": "Application Center"}, {"Label": "Application List"}, {"Label": "An Application"}]
-    st.write('Items:')
-    st.code(items)
     import pandas as pd
+
     if 'deleted' not in st.session_state:
         st.session_state.deleted = set()
+        
     data = [{
         "a": i,
         "name": f"Mapix {i}",
         "age": 10 + i,
+        "tags": "Apple, Aibee",
         "address": f"Beijing no. {i}",
         "address1": f"Beijing no. {i}",
         "address2": f"Beijing no. {i}",
@@ -102,13 +103,14 @@ if _DEVELOP_MODE:
         hidden_columns=['a'],
         fixed_left_columns=['name'],
         fixed_right_columns=['createdAt'],
-        custom_columns_width={'name': 150},
-        default_column_width=140,
+        tags_columns=['tags'],
+        custom_columns_width={'name': 150, 'tags': 200},
         actions=['Delete', 'Edit'],
         key='addd')
     st.write(r)
     if r and r.get('action') == 'Delete':
         print('delete event found')
+
         st.session_state.deleted.add(r['action_records'][0]['name'])
         st.experimental_rerun()
   
