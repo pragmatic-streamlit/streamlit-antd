@@ -4,8 +4,8 @@ import {
   withStreamlitConnection,
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
-import { Table, Input, Button, Tag, Space, InputRef, Tooltip} from 'antd';
-import { ColumnProps, ColumnsType, ColumnType } from "antd/lib/table";
+import { Table, Input, Button, Tag, Space, InputRef, Tooltip, Popconfirm } from 'antd';
+import { ColumnType } from "antd/lib/table";
 import { v4 as uuidv4 } from 'uuid';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
@@ -15,38 +15,58 @@ interface IExtra {
   action: string
 }
 
-interface State {
-  pagination?: any
-  filters?: any 
-  sorter?: any 
-  action?: string 
-  action_records?: any[]
-  action_id?: string
-  searchText?: string
-  searchedColumn?: string
+interface EventPayload {
+  action: string
+  records?: any[]
+  column?: string
 }
 
-export interface FilterConfirmProps {
+interface Event {
+  id: string
+  payload: EventPayload
+}
+
+interface State {
+  pagination?: any
+  filters?: any
+  sorter?: any
+  searchText?: string
+  searchedColumn?: string
+  selectedRowKeys?: React.Key[]
+}
+
+interface FilterConfirmProps {
   closeDropdown: boolean;
 }
-export interface ColumnFilterItem {
- text: React.ReactNode;
- value: string | number | boolean;
- children?: ColumnFilterItem[];
+
+interface ColumnFilterItem {
+  text: React.ReactNode;
+  value: string | number | boolean;
+  children?: ColumnFilterItem[];
 }
-export interface FilterDropdownProps {
- prefixCls: string;
- setSelectedKeys: (selectedKeys: React.Key[]) => void;
- selectedKeys: React.Key[];
- confirm: (param?: FilterConfirmProps) => void;
- clearFilters: () => void;
- filters?: ColumnFilterItem[];
- visible: boolean;
+
+interface FilterDropdownProps {
+  prefixCls: string;
+  setSelectedKeys: (selectedKeys: React.Key[]) => void;
+  selectedKeys: React.Key[];
+  confirm: (param?: FilterConfirmProps) => void;
+  clearFilters: () => void;
+  filters?: ColumnFilterItem[];
+  visible: boolean;
 }
+
+function isDate(dateStr: string) {
+  return !isNaN(new Date(dateStr).getDate());
+}
+
+function isFloat(floatStr: string) {
+  return !isNaN(parseFloat(floatStr));
+}
+
 
 class STTable extends StreamlitComponentBase<State>{
 
-  constructor(props: any){
+  constructor(props: any) {
     super(props)
     this.state = {
       searchedColumn: ""
@@ -55,7 +75,7 @@ class STTable extends StreamlitComponentBase<State>{
 
   searchInput?: InputRef;
 
-  getColumnSearchProps = (dataIndex: string) => ({
+  getColumnSearchProps = (dataIndex: string, linkable: boolean) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: FilterDropdownProps) => (
       <div style={{ padding: 8 }}>
         <Input
@@ -97,27 +117,32 @@ class STTable extends StreamlitComponentBase<State>{
         </Space>
       </div>
     ),
-    filterIcon: (filtered: boolean)=> <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
     onFilter: (value: string, record: any) =>
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
         : '',
-    onFilterDropdownVisibleChange: (visible: boolean)=> {
+    onFilterDropdownVisibleChange: (visible: boolean) => {
       if (visible) {
         setTimeout(() => this.searchInput && this.searchInput.select(), 100);
       }
     },
-    render: (text: string) =>
-      this.state.searchedColumn === dataIndex ? (
+    render: (text: string, record: any) => {
+      let x = this.state.searchedColumn && this.state.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
           searchWords={[this.state.searchText]}
           autoEscape
           textToHighlight={text ? text.toString() : ''}
         />
-      ) : (<Tooltip placement="topLeft" title={text}> 
+      ) : (<Tooltip placement="topLeft" title={text}>
         {text}</Tooltip>
-      ),
+      )
+      if (linkable) {
+        x = <a href="#" onClick={this.handleAction("ClickLink", record, dataIndex).bind(this)}>{x}</a>
+      }
+      return x
+    }
   });
 
   handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
@@ -133,90 +158,119 @@ class STTable extends StreamlitComponentBase<State>{
     this.setState({ searchText: '' });
   };
 
-  private handleAction(action: string, record: object) {
+  private handleAction(action: string, records: object[], column?: string) {
     const that = this;
-    return function(e:  React.MouseEvent<HTMLElement>) {
+    return function (e: React.MouseEvent<HTMLElement>) {
       e.stopPropagation();
-      that.setState({ 
-          action: action, 
-          action_records: [record],
-          action_id: uuidv4(),
-        },
-        () => Streamlit.setComponentValue(that.state)
-      )
+      const event: Event = {
+        id: uuidv4(),
+        payload: {
+          action,
+          records,
+          column,
+        }
+      }
+      Streamlit.setComponentValue(event);
+      that.setState({ selectedRowKeys: [] })
     }
   }
 
   private handleReAction(pagination: any, filters: any, sorter: any, extra: IExtra) {
-    Streamlit.setFrameHeight(100);
-    setTimeout(Streamlit.setFrameHeight, 1);
-    /* this.setState({ 
-        pagination,
-        filters,
-        sorter,
-        action: extra.action,
-        action_id: uuidv4(),
-      },
-      () => Streamlit.setComponentValue(this.state)
-    ) */
+    this.ajustHeight();
+  }
+
+  ajustHeight(revoke_step?: number) {
+    const root = document.getElementById('root');
+    if (root) {
+      const height = Math.min(root.clientHeight, root.scrollHeight, root.offsetHeight);
+      Streamlit.setFrameHeight(height - (revoke_step? revoke_step: 0));
+      setTimeout(Streamlit.setFrameHeight, 1);
+    }
   }
 
   componentDidMount() {
-    setTimeout(Streamlit.setFrameHeight, 1);
+    this.ajustHeight();
   }
 
   componentDidUpdate() {
-    setTimeout(Streamlit.setFrameHeight, 1);
+    this.ajustHeight();
   }
+
+  onSelectChange = (selectedRowKeys: React.Key[]) => {
+    this.setState({ selectedRowKeys });
+  };
 
   public render = (): ReactNode => {
     const data = this.props.args.data;
-    let columns : ColumnType<object>[] = this.props.args.columns;
-    const {actions, row_key, tags_columns, sorter_columns, searchable_columns} = this.props.args;
+    let columns: ColumnType<object>[] = this.props.args.columns;
+    const { row_key, actions_in_row, tags_columns, batch_actions, linkable_columns, sorter_columns, searchable_columns,
+      expand_column, default_expand_all_rows, iframes_in_row, revoke_height_step, iframe_height} = this.props.args;
+    let actions = this.props.args.actions;
     const that = this;
+
+
+    const { selectedRowKeys } = this.state;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+      selections: [
+        Table.SELECTION_ALL,
+        Table.SELECTION_INVERT,
+        Table.SELECTION_NONE,
+      ]
+    }
+
     columns.map((column: ColumnType<object>) => {
       column.ellipsis = {
         showTitle: false,
       };
+      if (linkable_columns.includes(((column.key as string)))) {
+        column.render = (text: string, record: any) => {
+          return <a href="#" onClick={that.handleAction("ClickLink", [record], column.key?.toString()).bind(that)}>{text}</a>
+        }
+      }
     })
-    if (actions) {
+    if (actions || actions_in_row) {
       columns = columns.concat(
         {
           title: 'Action',
           key: 'operation',
-          fixed: 'right', 
+          fixed: 'right',
           width: this.props.args.action_width,
-          render: (text, record: any) => (
-            <Space size="middle">
-              {actions.map(function(action: string, i: Number){
+          render: (text, record: any) => {
+            if (record['_antd_table_actions']) {
+              actions = record['_antd_table_actions']
+            }
+            return <Space size="middle">
+              {actions.map(function (action: string, i: Number) {
                 const key = record[row_key];
-                return <a href="#" key={key + action} onClick={that.handleAction(action, record).bind(that)}>{action}</a>
+                return <a href="#" key={action} onClick={that.handleAction(action, [record]).bind(that)}>{action}</a>
               })}
             </Space>
-          )
+          }
         }
       );
     }
     if (searchable_columns) {
       columns.map((column: ColumnType<object>) => {
-        if((searchable_columns as string[]).includes((column.key as string))){
-         Object.assign(column, this.getColumnSearchProps((column.dataIndex as string)));
+        if ((searchable_columns as string[]).includes((column.key as string))) {
+          Object.assign(column, this.getColumnSearchProps((column.dataIndex as string), linkable_columns.includes(((column.key as string)))));
         }
       })
     }
-
     if (sorter_columns) {
       columns.map((column: ColumnType<object>) => {
-        if((sorter_columns as string[]).includes((column.key as string))){
+        if ((sorter_columns as string[]).includes((column.key as string))) {
           column.defaultSortOrder = 'descend'
-          if (! column.sorter){
+          if (!column.sorter) {
             column.sorter = (a: any, b: any) => {
               const aa = a[(column.key as string)];
               const bb = b[(column.key as string)];
-              if (typeof(aa) === 'number') {
+              if (typeof (aa) === 'number') {
                 return aa - bb
-              }
-              if (/^\d+$/.test(aa) && /^\d+$/.test(bb)) {
+              } else if (isDate(aa) && isDate(bb)) {
+                return (new Date(aa)).getTime() - (new Date(bb)).getTime()
+              } else if (isFloat(aa) && isFloat(bb)) {
                 return Number.parseFloat(aa) - Number.parseFloat(bb)
               }
               return aa.localeCompare(bb)
@@ -227,8 +281,8 @@ class STTable extends StreamlitComponentBase<State>{
     }
     if (tags_columns) {
       columns.map((column: ColumnType<object>) => {
-        if((tags_columns as string[]).includes((column.key as string))){
-           column.render = (tags: string, record: any, index: Number ) => {
+        if ((tags_columns as string[]).includes((column.key as string))) {
+          column.render = (tags: string, record: any, index: Number) => {
             return <>
               {tags.split(',').map(tag => (
                 <Tag color="blue" key={'tags/' + tag + '/' + index}>
@@ -241,14 +295,56 @@ class STTable extends StreamlitComponentBase<State>{
       })
     }
     return (
-       <Table
-          onChange={this.handleReAction.bind(this)}
-          rowKey={row_key}
-          columns={columns}
-          dataSource={data}
-          scroll={{ x: 1500 }}
-          sticky
-        />
+      <Table
+        rowSelection={batch_actions ? rowSelection : undefined}
+        onChange={this.handleReAction.bind(this)}
+        rowKey={row_key}
+        columns={columns}
+        dataSource={data}
+        scroll={{ x: 1500 }}
+        sticky
+        expandable={(expand_column || iframes_in_row ) ? {
+          defaultExpandAllRows: default_expand_all_rows,
+          onExpand: (expanded: boolean, record: any) => {
+            this.ajustHeight(expanded?0:(revoke_height_step as number));
+          },
+          expandedRowRender: function(record: any, index, indent, expanded){
+            const root = document.getElementById('root');
+            let width = 0;
+            if (root) {
+                width = root.clientWidth;
+            }
+            return <>
+              {expand_column && <p style={{ margin: 0 }}>{record[(expand_column as string)]}</p>}
+              {record['_antd_table_iframes'] && record['_antd_table_iframes'].map((link: string, index: number) => {
+                return <iframe style={{marginRight: "3px"}} frameBorder="0" key={index.toString()} src={link} width={width/record['_antd_table_iframes'].length - 12} height={iframe_height}>Browser not compatible.</iframe>
+              })}
+            </>
+          },
+        } : undefined}
+        summary={pageData => {
+          return batch_actions ?
+            <Table.Summary fixed='bottom'>
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} colSpan={columns.length}>
+                  <Space size="middle">
+                    {batch_actions.map(function (action: string, i: Number) {
+                      const selectedKeys: string[] = (that.state.selectedRowKeys || []).map((key: React.Key) => (key.toString()));
+                      const records: object[] = (data as object[]).filter((item: any) => selectedKeys.includes(item[row_key].toString()));
+                      return <Popconfirm
+                      title="Are you sure to delete this task?"
+                      //onConfirm={confirm}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <Button key={`${i}`} onClick={that.handleAction(action, records).bind(that)}>{action}</Button></Popconfirm>
+                    })}
+                  </Space>
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            </Table.Summary> : <></>
+        }}
+      />
     )
   }
 }
