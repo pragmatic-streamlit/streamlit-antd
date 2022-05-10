@@ -74,7 +74,7 @@ def st_antd_table(df, row_key=None,
             columns.append(column)
     event = _component_func(data=data, columns=columns, actions=actions or None, 
         row_key=row_key, min_height=min_height, tags_columns=tags_columns or None, sorter_columns=sorter_columns or None,
-        linkable_columns=linkable_columns or None, batch_actions=batch_actions or None, revoke_height_step=revoke_height_step,
+        linkable_columns=linkable_columns or [], batch_actions=batch_actions or None, revoke_height_step=revoke_height_step,
         searchable_columns=searchable_columns or None, actions_in_row=bool(actions_mapper), iframe_height=iframe_height,
         expand_column=expand_column, default_expand_all_rows=default_expand_all_rows, iframes_in_row=bool(iframes_mapper),
         action_width=action_width, key=key, default=None)
