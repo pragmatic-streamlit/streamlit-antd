@@ -139,7 +139,7 @@ class STTable extends StreamlitComponentBase<State>{
         {text}</Tooltip>
       )
       if (linkable) {
-        x = <a href="#" onClick={this.handleAction("ClickLink", record, dataIndex).bind(this)}>{x}</a>
+        x = <a href="#" onClick={this.handleAction("ClickLink", [record], dataIndex).bind(this)}>{x}</a>
       }
       return x
     }
