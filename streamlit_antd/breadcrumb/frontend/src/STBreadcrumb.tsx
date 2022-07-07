@@ -5,11 +5,15 @@ import {
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
 import { Breadcrumb } from 'antd';
-
+import { v4 as uuidv4 } from 'uuid';
 
 
 interface Item {
   Label: string
+}
+interface Event {
+  id: string
+  payload: Item
 }
 
 interface State {
@@ -39,9 +43,13 @@ class STBreadcrumb extends StreamlitComponentBase<State> {
     const that = this;
     return function() {
       console.log(item)
+      const event: Event = {
+        id: uuidv4(),
+        payload: item
+      }
       that.setState(
         prevState => ({ clickedItem: item}),
-        () => Streamlit.setComponentValue(item)
+        () => Streamlit.setComponentValue(event)
       )
     }
   };
