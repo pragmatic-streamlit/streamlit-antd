@@ -139,6 +139,7 @@ class STTable extends StreamlitComponentBase<State>{
         {text}</Tooltip>
       )
       if (linkable) {
+        // eslint-disable-next-line
         x = <a href="#" onClick={this.handleAction("ClickLink", [record], dataIndex).bind(this)}>{x}</a>
       }
       return x
@@ -220,12 +221,14 @@ class STTable extends StreamlitComponentBase<State>{
       ]
     }
 
+    // eslint-disable-next-line
     columns.map((column: ColumnType<object>) => {
       column.ellipsis = {
         showTitle: false,
       };
       if (linkable_columns.includes(((column.key as string)))) {
         column.render = (text: string, record: any) => {
+          // eslint-disable-next-line
           return <a href="#" onClick={that.handleAction("ClickLink", [record], column.key?.toString()).bind(that)}>{text}</a>
         }
       }
@@ -235,7 +238,7 @@ class STTable extends StreamlitComponentBase<State>{
         {
           title: 'Action',
           key: 'operation',
-          fixed: 'right',
+          //fixed: 'right',
           width: this.props.args.action_width,
           render: (text, record: any) => {
             if (record['_antd_table_actions']) {
@@ -243,7 +246,7 @@ class STTable extends StreamlitComponentBase<State>{
             }
             return <Space size="middle">
               {actions.map(function (action: string, i: Number) {
-                const key = record[row_key];
+                // eslint-disable-next-line
                 return <a href="#" key={action} onClick={that.handleAction(action, [record]).bind(that)}>{action}</a>
               })}
             </Space>
@@ -252,6 +255,7 @@ class STTable extends StreamlitComponentBase<State>{
       );
     }
     if (searchable_columns) {
+      // eslint-disable-next-line
       columns.map((column: ColumnType<object>) => {
         if ((searchable_columns as string[]).includes((column.key as string))) {
           Object.assign(column, this.getColumnSearchProps((column.dataIndex as string), linkable_columns.includes(((column.key as string)))));
@@ -259,6 +263,7 @@ class STTable extends StreamlitComponentBase<State>{
       })
     }
     if (sorter_columns) {
+      // eslint-disable-next-line
       columns.map((column: ColumnType<object>) => {
         if ((sorter_columns as string[]).includes((column.key as string))) {
           column.defaultSortOrder = 'descend'
@@ -280,6 +285,7 @@ class STTable extends StreamlitComponentBase<State>{
       })
     }
     if (tags_columns) {
+      // eslint-disable-next-line
       columns.map((column: ColumnType<object>) => {
         if ((tags_columns as string[]).includes((column.key as string))) {
           column.render = (tags: string, record: any, index: Number) => {
@@ -317,6 +323,7 @@ class STTable extends StreamlitComponentBase<State>{
             return <>
               {expand_column && <p style={{ margin: 0 }}>{record[(expand_column as string)]}</p>}
               {record['_antd_table_iframes'] && record['_antd_table_iframes'].map((link: string, index: number) => {
+                // eslint-disable-next-line
                 return <iframe style={{marginRight: "3px"}} frameBorder="0" key={index.toString()} src={link} width={width/record['_antd_table_iframes'].length - 12} height={iframe_height}>Browser not compatible.</iframe>
               })}
             </>

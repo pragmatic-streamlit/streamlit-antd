@@ -4,11 +4,10 @@ import streamlit.components.v1 as components
 
 _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
 
-
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
-        "streamlit_antd_breadcrumb",
-        url="http://localhost:3001",
+        "streamlit_antd_table",
+        url="http://localhost:3000",
     )
 else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,7 +18,7 @@ else:
 def st_antd_table(df, row_key=None,
         columns=None,
         hidden_columns=None,
-        fixed_left_columns=None, 
+        fixed_left_columns=None,
         fixed_right_columns=None,
         custom_columns_width=None,
         default_column_width=140,
@@ -38,7 +37,7 @@ def st_antd_table(df, row_key=None,
         action_width=200,
         min_height=200,
         key=None):
-    sorter_columns = sorter_columns or list(df.columns) 
+    sorter_columns = sorter_columns or list(df.columns)
     searchable_columns = searchable_columns or list(df.columns)
     tags_columns = tags_columns or ['tags']
     if 'id' not in list(df.columns) and not row_key:
@@ -64,7 +63,7 @@ def st_antd_table(df, row_key=None,
                 fixed = 'left'
             if fixed_right_columns and name in fixed_right_columns:
                 fixed = 'right'
-            column = {  
+            column = {
                 'title': name.capitalize(),
                 'width': custom_columns_width.get(name, default_column_width) if custom_columns_width else default_column_width,
                 'dataIndex': name,
@@ -72,7 +71,7 @@ def st_antd_table(df, row_key=None,
                 'fixed': fixed,
             }
             columns.append(column)
-    event = _component_func(data=data, columns=columns, actions=actions or None, 
+    event = _component_func(data=data, columns=columns, actions=actions or None,
         row_key=row_key, min_height=min_height, tags_columns=tags_columns or None, sorter_columns=sorter_columns or None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None, revoke_height_step=revoke_height_step,
         searchable_columns=searchable_columns or None, actions_in_row=bool(actions_mapper), iframe_height=iframe_height,
@@ -93,13 +92,14 @@ def st_antd_table(df, row_key=None,
 
 if _DEVELOP_MODE:
     import streamlit as st
-    st.set_page_config(layout="wide")
+    #st.set_page_config(layout="wide")
     from datetime import datetime
     import pandas as pd
 
+    st.write('....')
     if 'deleted' not in st.session_state:
         st.session_state.deleted = set()
-        
+
     data = [{
         "a": i,
         "name": f"Mapix {i}",
@@ -122,8 +122,8 @@ if _DEVELOP_MODE:
     data = [i for i in data if i['name'] not in st.session_state.deleted]
     data = pd.DataFrame(data)
 
-    
-    event = st_antd_table(data, 
+
+    event = st_antd_table(data,
         hidden_columns=['a'],
         fixed_left_columns=['name'],
         linkable_columns=['name'],
@@ -141,4 +141,4 @@ if _DEVELOP_MODE:
         for i in event['payload']['records']:
             st.session_state.deleted.add(i['name'])
         st.experimental_rerun()
-  
+
