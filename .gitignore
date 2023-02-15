@@ -4,6 +4,8 @@ gconfig/local_config.py
 reports
 *.xlsx
 .DS_Store
+*/*/frontend/build
+build
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
