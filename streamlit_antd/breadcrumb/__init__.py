@@ -7,7 +7,7 @@ _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
         "streamlit_antd_breadcrumb",
-        url="http://localhost:3001",
+        url="http://localhost:3000",
     )
 else:
     # When we're distributing a production version of the component, we'll

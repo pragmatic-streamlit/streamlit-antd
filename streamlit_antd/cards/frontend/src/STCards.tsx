@@ -59,7 +59,9 @@ class STCards extends StreamlitComponentBase {
           style={{ width: 240, margin: "15px" }}
           cover={
             item.cover ? (
-              <img alt={item.cover} src={item.cover} width={240} height={160} />
+              <div style={{border: "1px solid #f0f0f0", borderBottom: "none"}}>
+              <img alt={item.cover} src={item.cover} width={238} height={160} />
+              </div>
             ) : null
           }
           actions={actions}

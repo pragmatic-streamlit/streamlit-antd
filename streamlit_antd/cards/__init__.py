@@ -1,7 +1,7 @@
 import os
 from hashlib import md5
 import streamlit.components.v1 as components
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import Optional, List
 
 _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
@@ -9,7 +9,7 @@ _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
 
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
-        "streamlit_antd_card",
+        "streamlit_antd_cards",
         url="http://localhost:3000",
     )
 else:
@@ -18,7 +18,7 @@ else:
     # build directory:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
-    _component_func = components.declare_component("streamlit_antd_card", path=build_dir)
+    _component_func = components.declare_component("streamlit_antd_cards", path=build_dir)
 
 @dataclass
 class Item:
@@ -26,9 +26,9 @@ class Item:
     id: str
     title: str
     description: str
-    email: Optional[str]
-    cover: Optional[str]
-    avatar: Optional[str]
+    email: Optional[str] = field(repr=False, default=None)
+    cover: Optional[str] = field(repr=False, default=None)
+    avatar: Optional[str] = field(repr=False, default=None)
 
 def _get_avatar_url(email):
     if isinstance(email, str):
@@ -58,7 +58,7 @@ def st_antd_cards(items: List[Item], *,
     return component_value
 
 
-if _DEVELOP_MODE:
+if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
     import streamlit as st
     st.set_page_config(layout="wide")
     items = [
@@ -70,7 +70,17 @@ if _DEVELOP_MODE:
             """,
             cover="https://www.researchgate.net/profile/Monika-Gaba/publication/279179780/figure/fig1/AS:391991113338883@1470469372538/Figure-Molecular-docking-of-ligand-to-a-protein-receptor-to-produce-a-complex.png",
             avatar="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg"
-        ) for i in range(10)
+        ) if i % 2 else 
+        Item(
+            str(i),
+            "Docking",
+            """
+            Molecular Docking is the computational modeling of the structure of complexes formed by two or more interacting molecules. The goal of molecular docking is the prediction of the three dimensional structures of interest. Docking itself only produces plausible candidate structures. These candidates are ranked using methods such as scoring functions to identify structures that are most likely to occur in nature. The state of the art of various computational aspects of molecular docking based virtual screening of database of small molecules is presented. This review encompasses molecular docking approaches, different search algorithms and the scoring functions used in docking methods and their applications to protein and nucleic acid drug targets. Limitations of current technologies as well as future prospects are also presented.
+            """,
+            cover="http://localhost:1024/artifacts/covers/9775dee02577400b8886f24659f6090c.jpeg",
+            email="mapix.me@gmail.com"
+        ) 
+        for i in range(10)
     ]
     st.write('Items:')
     st.code(items)

@@ -7,7 +7,7 @@ _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
         "streamlit_antd_cascader",
-        url="http://localhost:3001",
+        url="http://localhost:3000",
     )
 else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
