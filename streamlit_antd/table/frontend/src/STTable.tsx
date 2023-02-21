@@ -238,7 +238,6 @@ class STTable extends StreamlitComponentBase<State>{
         {
           title: 'Action',
           key: 'operation',
-          //fixed: 'right',
           width: this.props.args.action_width,
           render: (text, record: any) => {
             if (record['_antd_table_actions']) {
@@ -305,9 +304,10 @@ class STTable extends StreamlitComponentBase<State>{
         rowSelection={batch_actions ? rowSelection : undefined}
         onChange={this.handleReAction.bind(this)}
         rowKey={row_key}
+        size={'large'}
         columns={columns}
         dataSource={data}
-        scroll={{ x: 1500 }}
+        scroll={{x: true}}
         sticky
         expandable={(expand_column || iframes_in_row ) ? {
           defaultExpandAllRows: default_expand_all_rows,

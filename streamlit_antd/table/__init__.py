@@ -2,7 +2,7 @@ import os
 import streamlit as st
 import streamlit.components.v1 as components
 
-_DEVELOP_MODE = os.getenv('DEVELOP_MODE')
+_DEVELOP_MODE = os.getenv('DEVELOP_MODE') or os.getenv('ST_ANTD_DEVELOP_MODE')
 
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
@@ -21,7 +21,7 @@ def st_antd_table(df, row_key=None,
         fixed_left_columns=None,
         fixed_right_columns=None,
         custom_columns_width=None,
-        default_column_width=140,
+        default_column_width=None,
         tags_columns=None,
         sorter_columns=None,
         searchable_columns=None,
@@ -34,12 +34,14 @@ def st_antd_table(df, row_key=None,
         linkable_columns=None,
         revoke_height_step=0,
         expand_column=None,
-        action_width=200,
+        action_width=None,
         min_height=200,
         key=None):
-    sorter_columns = sorter_columns or list(df.columns)
-    searchable_columns = searchable_columns or list(df.columns)
-    tags_columns = tags_columns or ['tags']
+    if columns:
+        df = df[columns]
+    sorter_columns = sorter_columns or [column for column in df.columns if df.dtypes[column].kind == 'O']
+    searchable_columns = searchable_columns or [column for column in df.columns if df.dtypes[column].kind == 'O']
+    tags_columns = tags_columns or []
     if 'id' not in list(df.columns) and not row_key:
         df = df.reset_index()
         df = df.rename(columns={"index":"id"})
@@ -53,24 +55,23 @@ def st_antd_table(df, row_key=None,
     if callable(iframes_mapper):
         for item in data:
             item['_antd_table_iframes'] = iframes_mapper(item)
-    if not columns:
-        columns = []
-        for name in list(df.columns):
-            if hidden_columns and name in hidden_columns:
-                continue
-            fixed = False
-            if fixed_left_columns and name in fixed_left_columns:
-                fixed = 'left'
-            if fixed_right_columns and name in fixed_right_columns:
-                fixed = 'right'
-            column = {
-                'title': name.capitalize(),
-                'width': custom_columns_width.get(name, default_column_width) if custom_columns_width else default_column_width,
-                'dataIndex': name,
-                'key': name,
-                'fixed': fixed,
-            }
-            columns.append(column)
+    columns = []
+    for name in list(df.columns):
+        if hidden_columns and name in hidden_columns:
+            continue
+        fixed = False
+        if fixed_left_columns and name in fixed_left_columns:
+            fixed = 'left'
+        if fixed_right_columns and name in fixed_right_columns:
+            fixed = 'right'
+        column = {
+            'title': name.capitalize(),
+            'width': custom_columns_width.get(name, default_column_width) if custom_columns_width else default_column_width,
+            'dataIndex': name,
+            'key': name,
+            'fixed': fixed,
+        }
+        columns.append(column)
     event = _component_func(data=data, columns=columns, actions=actions or None,
         row_key=row_key, min_height=min_height, tags_columns=tags_columns or None, sorter_columns=sorter_columns or None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None, revoke_height_step=revoke_height_step,
@@ -90,7 +91,7 @@ def st_antd_table(df, row_key=None,
     return event
 
 
-if _DEVELOP_MODE:
+if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     import streamlit as st
     #st.set_page_config(layout="wide")
     from datetime import datetime
