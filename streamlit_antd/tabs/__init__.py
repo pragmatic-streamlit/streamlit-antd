@@ -6,7 +6,7 @@ _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
 
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
-        "streamlit_antd_breadcrumb",
+        "streamlit_antd_tabs",
         url="http://localhost:3000",
     )
 else:
