@@ -40,6 +40,10 @@ def st_antd_steps(items: List[Item], current: int, *, process: bool=False, error
 if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
     from collections import defaultdict
     import streamlit as st
+    st.set_page_config(page_title='Demo',
+                    layout='wide',
+                    initial_sidebar_state='expanded')
+
     st.subheader('Step Form demo')
     items = [
           Item('Inputs', 'This is a description.'),

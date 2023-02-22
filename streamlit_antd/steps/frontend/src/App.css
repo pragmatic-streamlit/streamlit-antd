@@ -1,1 +1,8 @@
 @import '~antd/dist/antd.css';
+
+.ant-steps-item:last-child {
+    flex: 1 !important;
+}
+.ant-steps-item-description {
+    max-width: unset !important;
+}
