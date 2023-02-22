@@ -24,13 +24,14 @@ class Item:
     subTitle: Optional[str] = field(default=None)
 
 
-def st_antd_steps(items: List[Item], current: int, percent: int=0, direction="horizontal", label_placement="horizontal", key=None):
+def st_antd_steps(items: List[Item], current: int, *, process: bool=False, error: bool=False, direction="horizontal", label_placement="horizontal", key=None):
     items = [asdict(item) for item in items]
     component_value = _component_func(
         items=items, 
         current=current,
-        percent=percent,
+        process=process,
         direction=direction,
+        error=error,
         label_placement=label_placement,
         key=key, default=None)
     return component_value
@@ -39,6 +40,7 @@ def st_antd_steps(items: List[Item], current: int, percent: int=0, direction="ho
 if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
     from collections import defaultdict
     import streamlit as st
+    st.subheader('Step Form demo')
     items = [
           Item('Inputs', 'This is a description.'),
           Item('Options', 'This is a description.'),
@@ -86,3 +88,17 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
     st.write('Done? :', done)
     if done:
         st.write(params)
+
+    st.subheader('Progress Demo')
+    items = [
+          Item('Inputs', 'This is a description.' * 10),
+          Item('Options', 'This is a description.' * 10 ),
+          Item('Review', 'This is a description.' * 10),
+        ]
+    st_antd_steps(items, 0, process=False, key="a")
+    st_antd_steps(items, 1, process=True, key="b")
+    st_antd_steps(items, 2, process=False, key="c")
+    st_antd_steps(items, 1, process=False, error=True, key="d")
+    st_antd_steps(items, 1, process=True, direction="vertical", key="e")
+    st_antd_steps(items, 1, process=False, error=True, direction="vertical", key="g")
+    st_antd_steps(items, 1, process=True, label_placement="vertical", key="f")
