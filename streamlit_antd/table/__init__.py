@@ -35,6 +35,8 @@ def st_antd_table(df, row_key=None,
         revoke_height_step=0,
         expand_column=None,
         action_width=None,
+        compact_layout=False,
+        color_backgroud='#f0f0f0',
         min_height=200,
         key=None):
     if columns:
@@ -77,6 +79,8 @@ def st_antd_table(df, row_key=None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None, revoke_height_step=revoke_height_step,
         searchable_columns=searchable_columns or None, actions_in_row=bool(actions_mapper), iframe_height=iframe_height,
         expand_column=expand_column, default_expand_all_rows=default_expand_all_rows, iframes_in_row=bool(iframes_mapper),
+        compact_layout=compact_layout,
+        color_backgroud=color_backgroud,
         action_width=action_width, key=key, default=None)
     action_id = event and event.get('id')
     if action_id:
@@ -93,11 +97,10 @@ def st_antd_table(df, row_key=None,
 
 if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     import streamlit as st
-    #st.set_page_config(layout="wide")
+    st.set_page_config(layout="wide")
     from datetime import datetime
     import pandas as pd
 
-    st.write('....')
     if 'deleted' not in st.session_state:
         st.session_state.deleted = set()
 
@@ -128,13 +131,9 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
         hidden_columns=['a'],
         fixed_left_columns=['name'],
         linkable_columns=['name'],
-        fixed_right_columns=['createdAt'],
-        custom_columns_width={'name': 150, 'tags': 200},
         revoke_height_step=300,
-        iframe_height=300,
         expand_column="description",
         batch_actions=['Batch Delete', 'Batch Mark'],
-        iframes_mapper=lambda x: ['//grafana.data-exchange.aibee.cn/d-solo/nginx/nginx-ingress-controller?orgId=1&refresh=5s&panelId=86&theme=light&var-namespace=All&var-controller_class=All&var-controller=All&var-ingress=customer-flow-postgrest'] * 4,
         actions_mapper=lambda x: ['Delete', 'Edit'] if x['age'] % 2==0 else ['View'], key='abc')
     st.write(event)
     if event and event['payload']['action'] in ('Delete', 'Batch Delete'):

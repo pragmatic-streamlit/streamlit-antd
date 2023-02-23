@@ -5,4 +5,5 @@
 }
 .ant-steps-item-description {
     max-width: unset !important;
+    padding-right: 3rem;
 }
