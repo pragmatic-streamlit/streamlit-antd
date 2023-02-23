@@ -15,7 +15,7 @@ else:
     _component_func = components.declare_component("streamlit_antd_table", path=build_dir)
 
 
-def st_antd_table(df, row_key=None,
+def st_antd_table(df, *, row_key=None,
         columns=None,
         hidden_columns=None,
         fixed_left_columns=None,
@@ -34,6 +34,7 @@ def st_antd_table(df, row_key=None,
         linkable_columns=None,
         revoke_height_step=0,
         expand_column=None,
+        expand_json=False,
         action_width=None,
         compact_layout=False,
         color_backgroud='#f0f0f0',
@@ -80,6 +81,7 @@ def st_antd_table(df, row_key=None,
         searchable_columns=searchable_columns or None, actions_in_row=bool(actions_mapper), iframe_height=iframe_height,
         expand_column=expand_column, default_expand_all_rows=default_expand_all_rows, iframes_in_row=bool(iframes_mapper),
         compact_layout=compact_layout,
+        expand_json=expand_json,
         color_backgroud=color_backgroud,
         action_width=action_width, key=key, default=None)
     action_id = event and event.get('id')
@@ -98,17 +100,20 @@ def st_antd_table(df, row_key=None,
 if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     import streamlit as st
     st.set_page_config(layout="wide")
+    import json
     from datetime import datetime
     import pandas as pd
 
     if 'deleted' not in st.session_state:
         st.session_state.deleted = set()
 
+    expand_json = st.checkbox('Expand Json')
+    desc = "Specify the width of columns if header and cell do not align properly. If specified width is not working or have gutter between columns, please try to leave one column at least without width to fit fluid layout, or make sure no long word to break table layout."
     data = [{
         "a": i,
         "name": f"Mapix {i}",
         "age": 10 + i,
-        "tags": "Apple, Aibee",
+        "tags": "Apple, Google",
         "address": f"Beijing no. {i}",
         "address1": f"Beijing no. {i}",
         "address2": f"Beijing no. {i}",
@@ -120,7 +125,7 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
         "address8": f"Beijing no. {i}",
         "address9": f"Beijing no. {i}",
         "address10": f"Beijing no. {i} xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "description": "Specify the width of columns if header and cell do not align properly. If specified width is not working or have gutter between columns, please try to leave one column at least without width to fit fluid layout, or make sure no long word to break table layout.",
+        "description": json.dumps({'desc': desc}) if expand_json else desc,
         "createdAt": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
     } for i in range(100)]
     data = [i for i in data if i['name'] not in st.session_state.deleted]
@@ -129,10 +134,13 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
 
     event = st_antd_table(data,
         hidden_columns=['a'],
+        row_key='a',
+        tags_columns=['tags'],
         fixed_left_columns=['name'],
         linkable_columns=['name'],
         revoke_height_step=300,
         expand_column="description",
+        expand_json=expand_json,
         batch_actions=['Batch Delete', 'Batch Mark'],
         actions_mapper=lambda x: ['Delete', 'Edit'] if x['age'] % 2==0 else ['View'], key='abc')
     st.write(event)

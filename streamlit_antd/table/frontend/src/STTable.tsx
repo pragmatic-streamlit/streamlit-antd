@@ -4,7 +4,6 @@ import {
   withStreamlitConnection,
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
-import { TinyColor } from "@ctrl/tinycolor"
 import {
   Table,
   Input,
@@ -22,6 +21,7 @@ import { ColumnType } from "antd/lib/table"
 import { v4 as uuidv4 } from "uuid"
 import Highlighter from "react-highlight-words"
 import { SearchOutlined } from "@ant-design/icons"
+import JSONPretty from "react-json-pretty"
 
 interface IExtra {
   action: string
@@ -150,7 +150,7 @@ class STTable extends StreamlitComponentBase<State> {
             .toLowerCase()
             .includes(value.toLowerCase())
         : "",
-    onFilterDropdownVisibleChange: (visible: boolean) => {
+    onFilterDropdownOpenChange: (visible: boolean) => {
       if (visible) {
         setTimeout(() => this.searchInput && this.searchInput.select(), 100)
       }
@@ -270,6 +270,7 @@ class STTable extends StreamlitComponentBase<State> {
       iframes_in_row,
       revoke_height_step,
       iframe_height,
+      expand_json,
     } = this.props.args
     let actions = this.props.args.actions
     const that = this
@@ -435,11 +436,17 @@ class STTable extends StreamlitComponentBase<State> {
                     }
                     return (
                       <>
-                        {expand_column && (
-                          <p style={{ margin: 0 }}>
-                            {record[expand_column as string]}
-                          </p>
-                        )}
+                        {expand_column &&
+                          (expand_json ? (
+                            <JSONPretty
+                              id="json-pretty"
+                              data={record[expand_column as string]}
+                            ></JSONPretty>
+                          ) : (
+                            <p style={{ margin: 0 }}>
+                              {record[expand_column as string]}
+                            </p>
+                          ))}
                         {record["_antd_table_iframes"] &&
                           record["_antd_table_iframes"].map(
                             (link: string, index: number) => {
@@ -488,6 +495,7 @@ class STTable extends StreamlitComponentBase<State> {
                             //onConfirm={confirm}
                             okText="Yes"
                             cancelText="No"
+                            key={`${i}`}
                           >
                             <Button
                               key={`${i}`}
