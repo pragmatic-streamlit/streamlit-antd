@@ -60,7 +60,7 @@ class STCards extends StreamlitComponentBase {
           cover={
             item.cover ? (
               <div style={{border: "1px solid #f0f0f0", borderBottom: "none"}}>
-              <img alt={item.cover} src={item.cover} width={238} height={160} />
+              <img alt={item.cover} src={item.cover} width={238} height={160} onClick={()=>that.onClick(item, "click")}/>
               </div>
             ) : null
           }
