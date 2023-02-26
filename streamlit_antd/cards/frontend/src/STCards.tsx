@@ -20,6 +20,7 @@ interface Item {
   cover: string
   cover_alt: string
   avatar: string
+  actions: any
 }
 
 class STCards extends StreamlitComponentBase {
@@ -35,7 +36,7 @@ class STCards extends StreamlitComponentBase {
     const rows: ReactNode[] = []
     let that = this
     items.forEach((item: Item, index: number) => {
-      const actions: ReactNode[] = this.props.args.actions.map(
+      const actions: ReactNode[] = item.actions.map(
         (action: any) => {
           const TPL = DynamicIcon()
           return <TPL

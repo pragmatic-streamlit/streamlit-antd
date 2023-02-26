@@ -21,6 +21,12 @@ else:
     _component_func = components.declare_component("streamlit_antd_cards", path=build_dir)
 
 @dataclass
+class Action:
+
+    action: str
+    icon: str
+
+@dataclass
 class Item:
 
     id: str
@@ -29,6 +35,7 @@ class Item:
     email: Optional[str] = field(repr=False, default=None)
     cover: Optional[str] = field(repr=False, default=None)
     avatar: Optional[str] = field(repr=False, default=None)
+    actions: Optional[List[Action]] = field(repr=False, default=None)
 
 def _get_avatar_url(email):
     if isinstance(email, str):
@@ -38,16 +45,14 @@ def _get_avatar_url(email):
 
     
 def st_antd_cards(items: List[Item], *,
-                 actions: Optional[List[Dict[str, str]]]=None,
                  desc_max_len=64,
                  key=None):
-    actions = actions or []
     for item in items:
+        item.actions = item.actions or []
         if item.email and not item.avatar:
             item.avatar = _get_avatar_url(item.email)
     component_value = _component_func(
         items=[asdict(item) for item in items],
-        actions=actions,
         desc_max_len=desc_max_len,
         key=key, default=None)
     return component_value
@@ -73,15 +78,16 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
             Molecular Docking is the computational modeling of the structure of complexes formed by two or more interacting molecules. The goal of molecular docking is the prediction of the three dimensional structures of interest. Docking itself only produces plausible candidate structures. These candidates are ranked using methods such as scoring functions to identify structures that are most likely to occur in nature. The state of the art of various computational aspects of molecular docking based virtual screening of database of small molecules is presented. This review encompasses molecular docking approaches, different search algorithms and the scoring functions used in docking methods and their applications to protein and nucleic acid drug targets. Limitations of current technologies as well as future prospects are also presented.
             """,
             cover="http://localhost:1024/artifacts/covers/9775dee02577400b8886f24659f6090c.jpeg",
-            email="mapix.me@gmail.com"
+            email="mapix.me@gmail.com",
+            actions=[
+                Action(**{'action': 'detail', 'icon': 'BarsOutlined'}),
+                Action(**{'action': 'edit', 'icon': 'EditOutlined'}),
+                Action(**{'action': 'setting', 'icon': 'SettingOutlined'}),
+                Action(**{'action': 'delete', 'icon': 'DeleteOutlined'}),
+             ]
         ) 
         for i in range(10)
     ]
-    clicked_event = st_antd_cards(items, actions=[
-        {'action': 'detail', 'icon': 'BarsOutlined'},
-        {'action': 'edit', 'icon': 'EditOutlined'},
-        {'action': 'setting', 'icon': 'SettingOutlined'},
-        {'action': 'delete', 'icon': 'DeleteOutlined'},
-        ])
+    clicked_event = st_antd_cards(items)
     st.write("Click return: ")
     st.write(clicked_event)

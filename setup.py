@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="streamlit-antd",
-    version="0.3.0",
+    version="0.4.0",
     author="mapix",
     author_email="mapix.me@gmail.com",
     description="",
@@ -14,9 +14,6 @@ setuptools.setup(
     classifiers=[],
     python_requires=">=3.6",
     install_requires=[
-        # By definition, a Custom Component depends on Streamlit.
-        # If your component has other Python dependencies, list
-        # them here.
         "streamlit >= 0.63",
     ],
 )
