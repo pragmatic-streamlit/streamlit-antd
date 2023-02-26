@@ -4,13 +4,9 @@ import {
   withStreamlitConnection,
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
-import {
-  EditOutlined,
-  DoubleRightOutlined,
-  SettingOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons"
 import { Avatar, Card } from "antd"
+import DynamicIcon from "./DynamicIcon"
+
 const { Meta } = Card
 
 const truncate = (input: string, maxlen: number) =>
@@ -20,13 +16,13 @@ interface Item {
   id: string
   title: string
   description: string
+  email: string
   cover: string
   cover_alt: string
   avatar: string
 }
 
 class STCards extends StreamlitComponentBase {
-
   private onClick(item: Item, event: string) {
     Streamlit.setComponentValue({
       action: event,
@@ -39,19 +35,15 @@ class STCards extends StreamlitComponentBase {
     const rows: ReactNode[] = []
     let that = this
     items.forEach((item: Item, index: number) => {
-      const actions: ReactNode[] = []
-      if (this.props.args.show_delete_action) {
-        actions.push(<DeleteOutlined key="delete" onClick={()=>that.onClick(item, "delete")}/>)
-      }
-      if (this.props.args.show_setting_action) {
-        actions.push(<SettingOutlined key="setting" onClick={()=>that.onClick(item, "setting")}/>)
-      }
-      if (this.props.args.show_edit_action) {
-        actions.push(<EditOutlined key="edit" onClick={()=>that.onClick(item, "edit")}/>)
-      }
-      if (this.props.args.show_open_action) {
-        actions.push(<DoubleRightOutlined key="open" onClick={()=>that.onClick(item, "open")}/>)
-      }
+      const actions: ReactNode[] = this.props.args.actions.map(
+        (action: any) => {
+          const TPL = DynamicIcon()
+          return <TPL
+            type={action.icon}
+            key={action.action}
+            onClick={() => that.onClick(item, action.action)}
+          />
+      })
       rows.push(
         <Card
           key={`card-${item.id}`}
@@ -59,15 +51,25 @@ class STCards extends StreamlitComponentBase {
           style={{ width: 240, margin: "15px" }}
           cover={
             item.cover ? (
-              <div style={{border: "1px solid #f0f0f0", borderBottom: "none"}}>
-              <img alt={item.cover} src={item.cover} width={238} height={160} onClick={()=>that.onClick(item, "click")}/>
+              <div
+                style={{ border: "1px solid #f0f0f0", borderBottom: "none" }}
+              >
+                <img
+                  alt={item.cover}
+                  src={item.cover}
+                  width={238}
+                  height={160}
+                  onClick={() => that.onClick(item, "click")}
+                />
               </div>
             ) : null
           }
           actions={actions}
         >
           <Meta
-            avatar={item.avatar ? <Avatar src={item.avatar} /> : null}
+            avatar={
+              item.avatar ? <Avatar src={item.avatar} alt={item.email} /> : null
+            }
             title={item.title}
             description={truncate(
               item.description,

@@ -2,7 +2,7 @@ import os
 from hashlib import md5
 import streamlit.components.v1 as components
 from dataclasses import dataclass, asdict, field
-from typing import Optional, List
+from typing import Optional, List, Optional, Dict, Tuple
 
 _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
 
@@ -36,23 +36,18 @@ def _get_avatar_url(email):
     hash = md5(email).hexdigest()
     return f"https://www.gravatar.com/avatar/{hash}"
 
-
+    
 def st_antd_cards(items: List[Item], *,
-                 show_edit_action: bool=True,
-                 show_setting_action: bool=True,
-                 show_open_action: bool=True,
-                 show_delete_action: bool =True,
+                 actions: Optional[List[Dict[str, str]]]=None,
                  desc_max_len=64,
                  key=None):
+    actions = actions or []
     for item in items:
         if item.email and not item.avatar:
             item.avatar = _get_avatar_url(item.email)
     component_value = _component_func(
         items=[asdict(item) for item in items],
-        show_edit_action=show_edit_action,
-        show_setting_action=show_setting_action,
-        show_open_action=show_open_action,
-        show_delete_action=show_delete_action,
+        actions=actions,
         desc_max_len=desc_max_len,
         key=key, default=None)
     return component_value
@@ -82,8 +77,11 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
         ) 
         for i in range(10)
     ]
-    st.write('Items:')
-    st.code(items)
-    clicked_event = st_antd_cards(items)
+    clicked_event = st_antd_cards(items, actions=[
+        {'action': 'detail', 'icon': 'BarsOutlined'},
+        {'action': 'edit', 'icon': 'EditOutlined'},
+        {'action': 'setting', 'icon': 'SettingOutlined'},
+        {'action': 'delete', 'icon': 'DeleteOutlined'},
+        ])
     st.write("Click return: ")
     st.write(clicked_event)
