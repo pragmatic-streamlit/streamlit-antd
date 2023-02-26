@@ -80,7 +80,7 @@ class STCards extends StreamlitComponentBase {
         </Card>
       )
     })
-    return <div style={{ display: "flex", flexWrap: "wrap" }}>{rows}</div>
+    return <div style={{ display: "flex", flexWrap: "wrap", paddingBottom: "35px" }}>{rows}</div>
   }
 }
 

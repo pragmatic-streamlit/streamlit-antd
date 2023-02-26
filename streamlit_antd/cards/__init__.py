@@ -69,7 +69,13 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
             Molecular Docking is the computational modeling of the structure of complexes formed by two or more interacting molecules. The goal of molecular docking is the prediction of the three dimensional structures of interest. Docking itself only produces plausible candidate structures. These candidates are ranked using methods such as scoring functions to identify structures that are most likely to occur in nature. The state of the art of various computational aspects of molecular docking based virtual screening of database of small molecules is presented. This review encompasses molecular docking approaches, different search algorithms and the scoring functions used in docking methods and their applications to protein and nucleic acid drug targets. Limitations of current technologies as well as future prospects are also presented.
             """,
             cover="https://www.researchgate.net/profile/Monika-Gaba/publication/279179780/figure/fig1/AS:391991113338883@1470469372538/Figure-Molecular-docking-of-ligand-to-a-protein-receptor-to-produce-a-complex.png",
-            avatar="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg"
+            avatar="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg",
+            actions=[
+                Action(**{'action': 'detail', 'icon': 'BarsOutlined'}),
+                Action(**{'action': 'edit', 'icon': 'EditOutlined'}),
+                Action(**{'action': 'setting', 'icon': 'SettingOutlined'}),
+                Action(**{'action': 'delete', 'icon': 'DeleteOutlined'}),
+             ]
         ) if i % 2 else 
         Item(
             str(i),
