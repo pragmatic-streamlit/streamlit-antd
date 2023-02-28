@@ -51,9 +51,10 @@ function filter(inputValue: string, options: DefaultOptionType[], fieldNames: Fi
 class STCascader extends StreamlitComponentBase<State> {
 
   public render = (): ReactNode => {
-    const options = this.props.args.options;
-    console.log(options);
-    const multiple: boolean = this.props.args.multiple;
+    // const options = this.props.args.options;
+    // console.log(999, this.props.args);
+    // const multiple: boolean = this.props.args.multiple;
+    const { options, multiple, ...props } = this.props.args;
     const x = multiple?
         <Cascader
         //allowClear={true}
@@ -63,7 +64,7 @@ class STCascader extends StreamlitComponentBase<State> {
         multiple={true}
         onDropdownVisibleChange={onVisibleChange}
         maxTagCount="responsive"
-
+        {...props}
         //showSearch={{ filter }}
       />:<Cascader
         allowClear={true}
@@ -73,6 +74,7 @@ class STCascader extends StreamlitComponentBase<State> {
         multiple={false}
         onDropdownVisibleChange={onVisibleChange}
         showSearch={{ filter }}
+        {...props}
       />
     return x
   }

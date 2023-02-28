@@ -2,6 +2,7 @@ import os
 import streamlit.components.v1 as components
 
 _DEVELOP_MODE = os.getenv('DEVELOP_MODE')
+# _DEVELOP_MODE = True
 
 
 if _DEVELOP_MODE:
@@ -15,8 +16,8 @@ else:
     _component_func = components.declare_component("streamlit_antd_cascader", path=build_dir)
 
 
-def st_antd_cascader(options, multiple=False, key=None):
-    component_value = _component_func(options=options, multiple=multiple, key=key, default=None)
+def st_antd_cascader(options, multiple=False, key=None, **kwargs):
+    component_value = _component_func(options=options, multiple=multiple, key=key, default=None, **kwargs)
     return component_value
 
 
@@ -68,6 +69,6 @@ if _DEVELOP_MODE:
     st.write('Options:')
     st.code(options)
     multiple = st.checkbox('Multiple')
-    selected = st_antd_cascader(options, multiple=multiple, key="abc")
+    selected = st_antd_cascader(options, multiple=multiple, key="abc", **{ "defaultValue": "zhonghuamen" })
     st.write("Selected return: ")
     st.write(selected)
