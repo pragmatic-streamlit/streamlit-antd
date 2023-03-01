@@ -31,19 +31,34 @@ class STCards extends StreamlitComponentBase {
     })
   }
 
+  componentDidUpdate(): void {
+    setTimeout(() => {
+      const root = document.getElementById("root")
+      if (root) {
+        const height = Math.max(
+          root.clientHeight,
+          root.scrollHeight,
+          root.offsetHeight
+        )
+        Streamlit.setFrameHeight(height)
+      }
+    }, 0)
+  }
+
   public render = (): ReactNode => {
     const items: Item[] = this.props.args.items
     const rows: ReactNode[] = []
     let that = this
     items.forEach((item: Item, index: number) => {
-      const actions: ReactNode[] = item.actions.map(
-        (action: any) => {
-          const TPL = DynamicIcon()
-          return <TPL
+      const actions: ReactNode[] = item.actions.map((action: any) => {
+        const TPL = DynamicIcon()
+        return (
+          <TPL
             type={action.icon}
             key={action.action}
             onClick={() => that.onClick(item, action.action)}
           />
+        )
       })
       rows.push(
         <Card
@@ -80,7 +95,7 @@ class STCards extends StreamlitComponentBase {
         </Card>
       )
     })
-    return <div style={{ display: "flex", flexWrap: "wrap", paddingBottom: "35px" }}>{rows}</div>
+    return <div style={{ display: "flex", flexWrap: "wrap" }}>{rows}</div>
   }
 }
 
