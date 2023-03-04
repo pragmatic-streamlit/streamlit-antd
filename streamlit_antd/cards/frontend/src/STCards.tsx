@@ -38,13 +38,13 @@ class STCards extends StreamlitComponentBase {
   componentDidMount(): void {
     setTimeout(() => {
       Streamlit.setFrameHeight()
-    }, 0)
+    }, 1000)
   }
   
   componentDidUpdate(): void {
     setTimeout(() => {
       Streamlit.setFrameHeight()
-    }, 0)
+    }, 1000)
   }
 
   public render = (): ReactNode => {
@@ -82,7 +82,8 @@ class STCards extends StreamlitComponentBase {
                   />
                  }{isVideo?.includes(item.cover.split('.')?.pop() as string) &&
                   <ReactPlayer url={item.cover}
-                    height={this.props.args.height} width={this.props.args.width - 2}
+                    height={this.props.args.height}
+                    width={this.props.args.width - 2}
                     pip={false}
                     volume={this.props.args.video_volume}
                     controls/>
