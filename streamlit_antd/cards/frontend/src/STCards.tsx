@@ -6,6 +6,7 @@ import {
 import React, { ReactNode } from "react"
 import { Avatar, Card } from "antd"
 import DynamicIcon from "./DynamicIcon"
+import ReactPlayer from 'react-player'
 
 const { Meta } = Card
 
@@ -23,6 +24,9 @@ interface Item {
   actions: any
 }
 
+const isImage = ['gif','jpg','jpeg','png', 'webp']
+const isVideo =['mpg', 'mp2', 'mpeg', 'mpe', 'mpv', 'mp4', 'avi'] 
+
 class STCards extends StreamlitComponentBase {
   private onClick(item: Item, event: string) {
     Streamlit.setComponentValue({
@@ -31,17 +35,15 @@ class STCards extends StreamlitComponentBase {
     })
   }
 
+  componentDidMount(): void {
+    setTimeout(() => {
+      Streamlit.setFrameHeight()
+    }, 0)
+  }
+  
   componentDidUpdate(): void {
     setTimeout(() => {
-      const root = document.getElementById("root")
-      if (root) {
-        const height = Math.max(
-          root.clientHeight,
-          root.scrollHeight,
-          root.offsetHeight
-        )
-        Streamlit.setFrameHeight(height)
-      }
+      Streamlit.setFrameHeight()
     }, 0)
   }
 
@@ -64,19 +66,27 @@ class STCards extends StreamlitComponentBase {
         <Card
           key={`card-${item.id}`}
           hoverable
-          style={{ width: 240, margin: "15px" }}
+          style={{ width: this.props.args.width, margin: this.props.args.margin }}
           cover={
             item.cover ? (
               <div
                 style={{ border: "1px solid #f0f0f0", borderBottom: "none" }}
               >
-                <img
-                  alt={item.cover}
-                  src={item.cover}
-                  width={238}
-                  height={160}
-                  onClick={() => that.onClick(item, "click")}
-                />
+                {isImage?.includes(item.cover.split('.').pop() as string) &&
+                  <img
+                    alt={item.cover}
+                    src={item.cover}
+                    width={this.props.args.width - 2}
+                    height={this.props.args.height}
+                    onClick={() => that.onClick(item, "click")}
+                  />
+                 }{isVideo?.includes(item.cover.split('.')?.pop() as string) &&
+                  <ReactPlayer url={item.cover}
+                    height={this.props.args.height} width={this.props.args.width - 2}
+                    pip={false}
+                    volume={this.props.args.video_volume}
+                    controls/>
+                 }
               </div>
             ) : null
           }

@@ -46,12 +46,20 @@ def _get_avatar_url(email):
     
 def st_antd_cards(items: List[Item], *,
                  desc_max_len=64,
+                 width=240,
+                 height=160,
+                 margin='15px',
+                 video_volume=0.3,
                  key=None):
     for item in items:
         item.actions = item.actions or []
         if item.email and not item.avatar:
             item.avatar = _get_avatar_url(item.email)
     component_value = _component_func(
+        width=width,
+        video_volume=video_volume,
+        height=height,
+        margin=margin,
         items=[asdict(item) for item in items],
         desc_max_len=desc_max_len,
         key=key, default=None)
@@ -61,6 +69,8 @@ def st_antd_cards(items: List[Item], *,
 if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
     import streamlit as st
     st.set_page_config(layout="wide")
+    width = st.number_input('Card Width', value=240)
+    height = st.number_input('Card Width', value=160)
     items = [
         Item(
             str(i),
@@ -68,8 +78,8 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
             """
             Molecular Docking is the computational modeling of the structure of complexes formed by two or more interacting molecules. The goal of molecular docking is the prediction of the three dimensional structures of interest. Docking itself only produces plausible candidate structures. These candidates are ranked using methods such as scoring functions to identify structures that are most likely to occur in nature. The state of the art of various computational aspects of molecular docking based virtual screening of database of small molecules is presented. This review encompasses molecular docking approaches, different search algorithms and the scoring functions used in docking methods and their applications to protein and nucleic acid drug targets. Limitations of current technologies as well as future prospects are also presented.
             """,
-            cover="https://openfiles.mlops.dp.tech/projects/launching/231a934b9ea0422ab49ed6b1ec0bc112/42.jpeg",
-            avatar="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg",
+            cover="http://localhost:8000/tutorial.mp4",
+            avatar="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.png",
             actions=[
                 Action(**{'action': 'detail', 'icon': 'BarsOutlined'}),
                 Action(**{'action': 'edit', 'icon': 'EditOutlined'}),
@@ -94,6 +104,6 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
         ) 
         for i in range(10)
     ]
-    clicked_event = st_antd_cards(items)
+    clicked_event = st_antd_cards(items, width=width, height=height)
     st.write("Click return: ")
     st.write(clicked_event)

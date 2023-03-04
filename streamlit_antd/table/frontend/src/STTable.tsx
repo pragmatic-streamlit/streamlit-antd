@@ -220,26 +220,10 @@ class STTable extends StreamlitComponentBase<State> {
     }
   }
 
-  private handleReAction(
-    pagination: any,
-    filters: any,
-    sorter: any,
-    extra: IExtra
-  ) {
-    this.ajustHeight()
-  }
-
-  ajustHeight(revoke_step?: number) {
-    const root = document.getElementById("root")
-    if (root) {
-      const height = Math.min(
-        root.clientHeight,
-        root.scrollHeight,
-        root.offsetHeight
-      )
-      Streamlit.setFrameHeight(height - (revoke_step ? revoke_step : 0))
-      setTimeout(Streamlit.setFrameHeight, 1)
-    }
+  ajustHeight() {
+    setTimeout(() => {
+      Streamlit.setFrameHeight()
+    }, 0)
   }
 
   componentDidMount() {
@@ -268,7 +252,6 @@ class STTable extends StreamlitComponentBase<State> {
       expand_column,
       default_expand_all_rows,
       iframes_in_row,
-      revoke_height_step,
       iframe_height,
       expand_json,
     } = this.props.args
@@ -407,7 +390,6 @@ class STTable extends StreamlitComponentBase<State> {
       >
         <Table
           rowSelection={batch_actions ? rowSelection : undefined}
-          onChange={this.handleReAction.bind(this)}
           rowKey={row_key}
           size={"large"}
           columns={columns}
@@ -419,9 +401,7 @@ class STTable extends StreamlitComponentBase<State> {
               ? {
                   defaultExpandAllRows: default_expand_all_rows,
                   onExpand: (expanded: boolean, record: any) => {
-                    this.ajustHeight(
-                      expanded ? 0 : (revoke_height_step as number)
-                    )
+                    this.ajustHeight()
                   },
                   expandedRowRender: function (
                     record: any,
