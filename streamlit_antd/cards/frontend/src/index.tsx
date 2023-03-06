@@ -2,6 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import STCards from "./STCards"
 import 'antd/dist/antd.css'; 
+import './App.css';
 
 ReactDOM.render(
   <React.StrictMode>

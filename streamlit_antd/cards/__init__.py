@@ -41,7 +41,7 @@ def _get_avatar_url(email):
     if isinstance(email, str):
         email = email.encode('utf-8')
     hash = md5(email).hexdigest()
-    return f"https://www.gravatar.com/avatar/{hash}"
+    return f'https://cdn.v2ex.com/gravatar/{hash}'
 
     
 def st_antd_cards(items: List[Item], *,
