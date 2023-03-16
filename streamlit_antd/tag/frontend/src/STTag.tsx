@@ -5,13 +5,23 @@ import {
 } from "streamlit-component-lib"
 import React, { ReactNode } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-// import type { InputRef } from 'antd';
+import type { InputRef } from 'antd';
 import { Space, Input, Tag, Tooltip } from 'antd';
 
+interface IState {
+  tags: Array<string>,
+  inputVisible: boolean,
+  inputValue: string,
+  editInputIndex: number,
+  editInputValue: string,
+  inputRef: InputRef | null,
+  editInputRef: InputRef | null,
+}
 
-class STTag extends StreamlitComponentBase {
+
+class STTag extends StreamlitComponentBase<IState> {
   state = {
-    tags: ['Unremovable', 'Tag 2', 'Tag 3'],
+    tags: this.props.args.tag_list,
     inputVisible: false,
     inputValue: "",
     editInputIndex: -1,
@@ -19,6 +29,8 @@ class STTag extends StreamlitComponentBase {
     inputRef: null,
     editInputRef: null,
   }
+  new_tag_name = this.props.args.new_tag_name;
+  removable_start_idx: number = this.props.args.removable_start_idx;
 
   ajustHeight() {
     setTimeout(() => {
@@ -38,8 +50,8 @@ class STTag extends StreamlitComponentBase {
   
     const handleClose = (removedTag: string) => {
       const newTags = this.state.tags.filter((tag) => tag !== removedTag);
-      console.log(newTags);
-      this.setState({tags: newTags})
+      this.setState({tags: newTags});
+      Streamlit.setComponentValue(this.state.tags);
     };
   
     const showInput = () => {
@@ -53,6 +65,7 @@ class STTag extends StreamlitComponentBase {
     const handleInputConfirm = () => {
       if (this.state.inputValue && this.state.tags.indexOf(this.state.inputValue) === -1) {
         this.setState({tags: [...this.state.tags, this.state.inputValue]})
+        Streamlit.setComponentValue(this.state.tags);
       }
       this.setState({inputVisible: false, inputValue: ""})
     };
@@ -64,7 +77,8 @@ class STTag extends StreamlitComponentBase {
     const handleEditInputConfirm = () => {
       const newTags = [...this.state.tags];
       newTags[this.state.editInputIndex] = this.state.editInputValue;
-      this.setState({tags: newTags, editInputIndex: -1, editInputValue: ""})
+      this.setState({tags: newTags, editInputIndex: -1, editInputValue: ""});
+      Streamlit.setComponentValue(this.state.tags);
     };
   
     const tagInputStyle: React.CSSProperties = {
@@ -101,7 +115,7 @@ class STTag extends StreamlitComponentBase {
             const tagElem = (
               <Tag
                 key={tag}
-                closable={index !== 0}
+                closable={index >= this.removable_start_idx}
                 style={{ userSelect: 'none' }}
                 onClose={() => handleClose(tag)}
               >
@@ -139,7 +153,7 @@ class STTag extends StreamlitComponentBase {
           />
         ) : (
           <Tag style={tagPlusStyle} onClick={showInput}>
-            <PlusOutlined /> New Tag
+            <PlusOutlined />{this.new_tag_name}
           </Tag>
         )}
       </Space>
