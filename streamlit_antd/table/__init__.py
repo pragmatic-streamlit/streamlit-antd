@@ -106,7 +106,7 @@ def st_antd_table(df, *, row_key=None,
     return event
 
 
-def with_page_loader(key, df_loader, total, page_size=10, state=None, **kwargs):
+def st_antd_dynamic_table(key, df_loader, total, page_size=10, state=None, **kwargs):
     kwargs['key'] = key
     pager_key = f'{key}-pager'
     kwargs['show_pager'] = True
@@ -164,7 +164,7 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     data = pd.DataFrame(data)
 
     if func == 'Dynamic Table':
-        event = with_page_loader('demo-dynamic', lambda page, size: data.iloc[(page - 1)*size:page*size], len(data.index))
+        event = st_antd_dynamic_table('demo-dynamic', lambda page, size: data.iloc[(page - 1)*size:page*size], len(data.index))
         st.write(event)
     else:
         event = st_antd_table(data,
