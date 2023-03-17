@@ -39,7 +39,7 @@ interface Event {
 }
 
 interface State {
-  pagination?: any
+  //pagination?: any
   filters?: any
   sorter?: any
   searchText?: string
@@ -234,6 +234,18 @@ class STTable extends StreamlitComponentBase<State> {
     this.ajustHeight()
   }
 
+  onPagerChange = (page: Number, pageSize: Number) => {
+    const event: Event = {
+      id: uuidv4(),
+      payload: {
+        action: "pager",
+        records: [{"page": page, "page_size": pageSize}],
+        column: undefined,
+      },
+    }
+    Streamlit.setComponentValue(event)
+  }
+
   onSelectChange = (selectedRowKeys: React.Key[]) => {
     this.setState({ selectedRowKeys })
   }
@@ -253,7 +265,12 @@ class STTable extends StreamlitComponentBase<State> {
       default_expand_all_rows,
       iframes_in_row,
       iframe_height,
+      rows_per_page,
+      show_pager,
       expand_json,
+      dynamic_pager_page,
+      enable_dynamic_pager,
+      dynamic_pager_total,
     } = this.props.args
     let actions = this.props.args.actions
     const that = this
@@ -374,6 +391,15 @@ class STTable extends StreamlitComponentBase<State> {
     }
     const compact_layout = this.props.args.compact_layout
     const color_backgroud = this.props.args.color_backgroud
+    let pager : any = false
+    if (show_pager) {
+      pager = { pageSize: rows_per_page, showQuickJumper: true }
+      if (enable_dynamic_pager){
+        pager.total = dynamic_pager_total
+        pager.current = dynamic_pager_page
+        pager.onChange = this.onPagerChange.bind(this)
+      }
+    }
     return (
       <ConfigProvider
         theme={{
@@ -389,6 +415,7 @@ class STTable extends StreamlitComponentBase<State> {
         }}
       >
         <Table
+          pagination={pager}
           rowSelection={batch_actions ? rowSelection : undefined}
           rowKey={row_key}
           size={"large"}

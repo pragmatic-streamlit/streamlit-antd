@@ -36,8 +36,13 @@ def st_antd_table(df, *, row_key=None,
         expand_json=False,
         action_width=None,
         compact_layout=False,
+        show_pager=True,
         color_backgroud='#f0f0f0',
+        rows_per_page=20,
         min_height=200,
+        enable_dynamic_pager=False,
+        dynamic_pager_total=0,
+        dynamic_pager_page=0,
         key=None):
     if columns:
         df = df[columns]
@@ -79,8 +84,13 @@ def st_antd_table(df, *, row_key=None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None,
         searchable_columns=searchable_columns or None, actions_in_row=bool(actions_mapper), iframe_height=iframe_height,
         expand_column=expand_column, default_expand_all_rows=default_expand_all_rows, iframes_in_row=bool(iframes_mapper),
+        rows_per_page=rows_per_page,
         compact_layout=compact_layout,
         expand_json=expand_json,
+        dynamic_pager_page=dynamic_pager_page,
+        enable_dynamic_pager=enable_dynamic_pager,
+        dynamic_pager_total=dynamic_pager_total,
+        show_pager=show_pager,
         color_backgroud=color_backgroud,
         action_width=action_width, key=key, default=None)
     action_id = event and event.get('id')
@@ -96,6 +106,26 @@ def st_antd_table(df, *, row_key=None,
     return event
 
 
+def with_page_loader(key, df_loader, total, page_size=10, state=None, **kwargs):
+    kwargs['key'] = key
+    pager_key = f'{key}-pager'
+    kwargs['show_pager'] = True
+    kwargs['enable_dynamic_pager'] = True
+    state = state if state else st.session_state
+    page_info = state.get(pager_key, {})
+    page = page_info.get('page', 1)
+    page_size = page_info.get('page_size', page_size)
+    kwargs['dynamic_pager_page'] = page
+    kwargs['rows_per_page'] = page_size
+    kwargs['dynamic_pager_total'] = total
+    df = df_loader(page, page_size)
+    event = st_antd_table(df, **kwargs)
+    if event and event['payload']['action'] == 'pager':
+        state[pager_key] = event['payload']['records'][0]
+        st.experimental_rerun()
+    return event
+
+
 if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     import streamlit as st
     st.set_page_config(layout="wide")
@@ -106,7 +136,10 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     if 'deleted' not in st.session_state:
         st.session_state.deleted = set()
 
+    func = st.selectbox('Demo', ['Dynamic Table', 'Table'])
     expand_json = st.checkbox('Expand Json')
+    
+    show_pager = st.checkbox('Show Pager', True)
     desc = "Specify the width of columns if header and cell do not align properly. If specified width is not working or have gutter between columns, please try to leave one column at least without width to fit fluid layout, or make sure no long word to break table layout."
     data = [{
         "a": i,
@@ -130,21 +163,25 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     data = [i for i in data if i['name'] not in st.session_state.deleted]
     data = pd.DataFrame(data)
 
-
-    event = st_antd_table(data,
-        hidden_columns=['a'],
-        row_key='a',
-        tags_columns=['tags'],
-        fixed_left_columns=['name'],
-        linkable_columns=['name'],
-        expand_column="description",
-        expand_json=expand_json,
-        batch_actions=['Batch Delete', 'Batch Mark'],
-        actions_mapper=lambda x: ['Delete', 'Edit'] if x['age'] % 2==0 else ['View'], key='abc')
-    st.write(event)
-    if event and event['payload']['action'] in ('Delete', 'Batch Delete'):
-        print('delete event found')
-        for i in event['payload']['records']:
-            st.session_state.deleted.add(i['name'])
-        st.experimental_rerun()
+    if func == 'Dynamic Table':
+        event = with_page_loader('demo-dynamic', lambda page, size: data.iloc[(page - 1)*size:page*size], len(data.index))
+        st.write(event)
+    else:
+        event = st_antd_table(data,
+            hidden_columns=['a'],
+            row_key='a',
+            tags_columns=['tags'],
+            fixed_left_columns=['name'],
+            linkable_columns=['name'],
+            expand_column="description",
+            expand_json=expand_json,
+            show_pager=show_pager,
+            batch_actions=['Batch Delete', 'Batch Mark'],
+            actions_mapper=lambda x: ['Delete', 'Edit'] if x['age'] % 2==0 else ['View'], key='abc')
+        st.write(event)
+        if event and event['payload']['action'] in ('Delete', 'Batch Delete'):
+            print('delete event found')
+            for i in event['payload']['records']:
+                st.session_state.deleted.add(i['name'])
+            st.experimental_rerun()
 
