@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="streamlit-antd",
-    version="0.4.6",
+    version="0.5.0",
     author="mapix",
     author_email="mapix.me@gmail.com",
     description="",

@@ -6,3 +6,4 @@ set -ex
 (cd streamlit_antd/breadcrumb/frontend && npm i --legacy-peer-deps && npm run build)
 (cd streamlit_antd/steps/frontend && npm i --legacy-peer-deps && npm run build)
 (cd streamlit_antd/result/frontend && npm i --legacy-peer-deps && npm run build)
+(cd streamlit_antd/tag/frontend && npm i --legacy-peer-deps && npm run build)

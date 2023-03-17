@@ -223,7 +223,7 @@ class STTable extends StreamlitComponentBase<State> {
   ajustHeight() {
     setTimeout(() => {
       Streamlit.setFrameHeight()
-    }, 0)
+    }, 300)
   }
 
   componentDidMount() {

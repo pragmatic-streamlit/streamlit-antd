@@ -38,13 +38,13 @@ class STCards extends StreamlitComponentBase {
   componentDidMount(): void {
     setTimeout(() => {
       Streamlit.setFrameHeight()
-    }, 1000)
+    }, 300)
   }
   
   componentDidUpdate(): void {
     setTimeout(() => {
       Streamlit.setFrameHeight()
-    }, 1000)
+    }, 300)
   }
 
   public render = (): ReactNode => {
