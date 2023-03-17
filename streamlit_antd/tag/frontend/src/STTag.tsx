@@ -39,19 +39,18 @@ class STTag extends StreamlitComponentBase<IState> {
   }
 
   componentDidMount() {
-    this.ajustHeight()
+    this.ajustHeight();
   }
 
   componentDidUpdate() {
-    this.ajustHeight()
+    this.ajustHeight();
   }
 
   public render = (): ReactNode => {
   
     const handleClose = (removedTag: string) => {
       const newTags = this.state.tags.filter((tag) => tag !== removedTag);
-      this.setState({tags: newTags});
-      Streamlit.setComponentValue(this.state.tags);
+      this.setState({tags: newTags}, () => {Streamlit.setComponentValue(this.state.tags)});
     };
   
     const showInput = () => {
@@ -64,8 +63,7 @@ class STTag extends StreamlitComponentBase<IState> {
   
     const handleInputConfirm = () => {
       if (this.state.inputValue && this.state.tags.indexOf(this.state.inputValue) === -1) {
-        this.setState({tags: [...this.state.tags, this.state.inputValue]})
-        Streamlit.setComponentValue(this.state.tags);
+        this.setState({tags: [...this.state.tags, this.state.inputValue]}, () => {Streamlit.setComponentValue(this.state.tags)})
       }
       this.setState({inputVisible: false, inputValue: ""})
     };
@@ -77,8 +75,7 @@ class STTag extends StreamlitComponentBase<IState> {
     const handleEditInputConfirm = () => {
       const newTags = [...this.state.tags];
       newTags[this.state.editInputIndex] = this.state.editInputValue;
-      this.setState({tags: newTags, editInputIndex: -1, editInputValue: ""});
-      Streamlit.setComponentValue(this.state.tags);
+      this.setState({tags: newTags, editInputIndex: -1, editInputValue: ""}, () => {Streamlit.setComponentValue(this.state.tags)});
     };
   
     const tagInputStyle: React.CSSProperties = {
@@ -90,8 +87,6 @@ class STTag extends StreamlitComponentBase<IState> {
       // background: token.colorBgContainer,
       borderStyle: 'dashed',
     };
-
-    // Streamlit.setComponentValue("return");
   
     return (
       <Space size={[0, 8]} wrap>
