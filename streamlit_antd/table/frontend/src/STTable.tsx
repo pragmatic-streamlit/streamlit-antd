@@ -505,22 +505,14 @@ class STTable extends StreamlitComponentBase<State> {
                             selectedKeys.includes(item[row_key].toString())
                         )
                         return (
-                          <Popconfirm
-                            title="Are you sure to delete this task?"
-                            //onConfirm={confirm}
-                            okText="Yes"
-                            cancelText="No"
+                          <Button
                             key={`${i}`}
+                            onClick={that
+                              .handleAction(action, records)
+                              .bind(that)}
                           >
-                            <Button
-                              key={`${i}`}
-                              onClick={that
-                                .handleAction(action, records)
-                                .bind(that)}
-                            >
-                              {action}
-                            </Button>
-                          </Popconfirm>
+                            {action}
+                          </Button>
                         )
                       })}
                     </Space>
