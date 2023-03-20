@@ -16,8 +16,8 @@ else:
     _component_func = components.declare_component("streamlit_antd_tag", path=build_dir)
 
 
-def st_antd_tag(tag_list: Tuple[str] = (), removable_start_idx: int = 0, new_tag_name='New Tag') -> List[str]:
-    component_value = _component_func(tag_list=list(tag_list), removable_start_idx=removable_start_idx, new_tag_name=new_tag_name)
+def st_antd_tag(tag_list: Tuple[str] = (), removable_start_idx: int = 0, new_tag_name='New Tag', key=None) -> List[str]:
+    component_value = _component_func(tag_list=list(tag_list), removable_start_idx=removable_start_idx, new_tag_name=new_tag_name, key=key)
     return list(tag_list) if component_value is None else component_value
 
 
@@ -25,9 +25,9 @@ if _DEVELOP_MODE or os.getenv('SHOW_TAG_DEMO'):
     import streamlit as st
     st.set_page_config(layout="wide")
 
-    event = st_antd_tag()
+    event = st_antd_tag(key='demo1')
     print("event:", event)
     
-    event = st_antd_tag(['tag1', 'tag2', 'tag3'], 2, 'new')
+    event = st_antd_tag(['tag1', 'tag2', 'tag3'], 2, 'new', key='demo2')
     print("event:", event)
 
