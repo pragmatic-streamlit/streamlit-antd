@@ -271,9 +271,12 @@ class STTable extends StreamlitComponentBase<State> {
       dynamic_pager_page,
       enable_dynamic_pager,
       dynamic_pager_total,
+      unsafe_html_columns,
     } = this.props.args
     let actions = this.props.args.actions
     const that = this
+
+    // console.log(8989898, columns)
 
     const { selectedRowKeys } = this.state
     const rowSelection = {
@@ -389,6 +392,11 @@ class STTable extends StreamlitComponentBase<State> {
         }
       })
     }
+
+    columns = unsafe_html_columns ? columns.map(
+      column => unsafe_html_columns.includes(column.key) ? { ...column, render: text => (<div dangerouslySetInnerHTML={{ __html: text }} />) } : column
+    ) : columns
+
     const compact_layout = this.props.args.compact_layout
     const color_backgroud = this.props.args.color_backgroud
     let pager : any = false
