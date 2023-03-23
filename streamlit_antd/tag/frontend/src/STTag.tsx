@@ -31,6 +31,7 @@ class STTag extends StreamlitComponentBase<IState> {
   }
   new_tag_name = this.props.args.new_tag_name;
   removable_start_idx: number = this.props.args.removable_start_idx;
+  log_tag_threshold: number = this.props.args.log_tag_threshold
 
   ajustHeight() {
     setTimeout(() => {
@@ -106,7 +107,7 @@ class STTag extends StreamlitComponentBase<IState> {
                 />
               );
             }
-            const isLongTag = tag.length > 20;
+            const isLongTag = tag.length > this.log_tag_threshold;
             const tagElem = (
               <Tag
                 key={tag}
@@ -122,7 +123,7 @@ class STTag extends StreamlitComponentBase<IState> {
                     }
                   }}
                 >
-                  {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+                  {isLongTag ? `${tag.slice(0, this.log_tag_threshold)}...` : tag}
                 </span>
               </Tag>
             );
