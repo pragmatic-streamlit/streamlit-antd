@@ -43,6 +43,7 @@ def st_antd_table(df, *, row_key=None,
         enable_dynamic_pager=False,
         dynamic_pager_total=0,
         dynamic_pager_page=0,
+        unsafe_html_columns=None,
         key=None):
     if columns:
         df = df[columns]
@@ -79,6 +80,7 @@ def st_antd_table(df, *, row_key=None,
             'fixed': fixed,
         }
         columns.append(column)
+        
     event = _component_func(data=data, columns=columns, actions=actions or None,
         row_key=row_key, min_height=min_height, tags_columns=tags_columns or None, sorter_columns=sorter_columns or None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None,
@@ -92,7 +94,7 @@ def st_antd_table(df, *, row_key=None,
         dynamic_pager_total=dynamic_pager_total,
         show_pager=show_pager,
         color_backgroud=color_backgroud,
-        action_width=action_width, key=key, default=None)
+        action_width=action_width, unsafe_html_columns=unsafe_html_columns, key=key, default=None)
     action_id = event and event.get('id')
     if action_id:
         session_key = f'components/streamlit-antd/table/state/{key}/last_action_id'
@@ -144,6 +146,7 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     data = [{
         "a": i,
         "name": f"Mapix {i}",
+        "avatar": f"<img width=\"100\" height=\"100\" src=\"https://openfiles.mlops.dp.tech/projects/launching/a12d15ff7b76432994d2cb81df28983a/home-3.png\" />",
         "age": 10 + i,
         "tags": "Apple, Google",
         "address": f"Beijing no. {i}",
@@ -164,12 +167,13 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     data = pd.DataFrame(data)
 
     if func == 'Dynamic Table':
-        event = st_antd_dynamic_table('demo-dynamic', lambda page, size: data.iloc[(page - 1)*size:page*size], len(data.index))
+        event = st_antd_dynamic_table('demo-dynamic', lambda page, size: data.iloc[(page - 1)*size:page*size], len(data.index), unsafe_html_columns=['avatar'])
         st.write(event)
     else:
         event = st_antd_table(data,
             hidden_columns=['a'],
             row_key='a',
+            unsafe_html_columns=['avatar'],
             tags_columns=['tags'],
             fixed_left_columns=['name'],
             linkable_columns=['name'],
