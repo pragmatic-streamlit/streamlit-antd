@@ -19,9 +19,12 @@ class STTabs extends StreamlitComponentBase<State> {
 
   public render = (): ReactNode => {
     const items = this.props.args.items;
+    const default_active = this.props.args.default_active;
     const that = this;
     return (
-      <Tabs  onChange={that.onClick.bind(that)}>
+      <Tabs 
+       defaultActiveKey={default_active}
+       onChange={that.onClick.bind(that)}>
         {items.map(function(object: Item, i: any){
           return <TabPane key={object.Label} tab={object.Label}></TabPane>
         })}
