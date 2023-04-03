@@ -24,6 +24,8 @@ def st_antd_tabs(items, *, default_active=None, session_state=None, key=None):
         if state != default_active:
             session_state[key] = default_active
             return [i for i in items if i['Label'] == default_active][0]
+        elif component_value is None and state:
+            return [i for i in items if i['Label'] == state][0]
     return component_value
 
 
