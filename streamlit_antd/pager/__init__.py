@@ -20,6 +20,7 @@ else:
 
 
 def st_pager(loader, total, *, page_size=10, state=None, args=None, kwargs=None, key=None):
+    import streamlit as st
     state = state if state else st.session_state
 
     kwargs = {} if kwargs is None else kwargs

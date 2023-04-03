@@ -1,5 +1,5 @@
 set -ex
-export NODE_OPTIONS="--openssl-legacy-provider"
+#export NODE_OPTIONS="--openssl-legacy-provider"
 export BROWSER=none
 (cd streamlit_antd/tabs/frontend && npm i --legacy-peer-deps && npm run build)
 (cd streamlit_antd/table/frontend && npm i --legacy-peer-deps && npm run build)
