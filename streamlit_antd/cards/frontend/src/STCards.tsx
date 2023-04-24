@@ -28,9 +28,10 @@ const isImage = ['gif','jpg','jpeg','png', 'webp']
 const isVideo =['mpg', 'mp2', 'mpeg', 'mpe', 'mpv', 'mp4', 'avi'] 
 
 class STCards extends StreamlitComponentBase {
-  private onClick(item: Item, event: string) {
+  private onClick(event: React.MouseEvent, item: Item, action: string) {
+    event.stopPropagation();
     Streamlit.setComponentValue({
-      action: event,
+      action: action,
       payload: item,
     })
   }
@@ -58,7 +59,7 @@ class STCards extends StreamlitComponentBase {
           <TPL
             type={action.icon}
             key={action.action}
-            onClick={() => that.onClick(item, action.action)}
+            onClick={(event: React.MouseEvent) => that.onClick(event, item, action.action)}
           />
         )
       })
@@ -78,7 +79,6 @@ class STCards extends StreamlitComponentBase {
                     src={item.cover}
                     width={this.props.args.width - 2}
                     height={this.props.args.height}
-                    onClick={() => that.onClick(item, "click")}
                   />
                  }{isVideo?.includes(item.cover.split('.')?.pop() as string) &&
                   <ReactPlayer url={item.cover}
@@ -92,6 +92,7 @@ class STCards extends StreamlitComponentBase {
             ) : null
           }
           actions={actions}
+          onClick={(event: React.MouseEvent) => that.onClick(event, item, "click")}
         >
           <Meta
             avatar={
