@@ -35,7 +35,7 @@ def st_antd_cascader(options, multiple=False, key=None, **kwargs):
     component_value = _component_func(options=options, multiple=multiple, key=key, default=None, **kwargs)
     if component_value != prev_value:
         set_session_value(value_key, component_value)
-        on_change and on_change(component_value)
+        on_change and on_change()
     return component_value
 
 
