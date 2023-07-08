@@ -5,10 +5,12 @@ import {
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
 import { Avatar, Card } from "antd"
+import { Input, Space } from 'antd'
 import DynamicIcon from "./DynamicIcon"
 import ReactPlayer from 'react-player'
 
 const { Meta } = Card
+const { Search } = Input
 
 const truncate = (input: string, maxlen: number) =>
   input.length > maxlen ? `${input.substring(0, maxlen)}...` : input
@@ -46,6 +48,14 @@ class STCards extends StreamlitComponentBase {
     setTimeout(() => {
       Streamlit.setFrameHeight()
     }, 300)
+  }
+
+  onSearch = (value: string) => {
+    Streamlit.setComponentValue(value)
+    Streamlit.setComponentValue({
+      action: "search",
+      payload: value,
+    })
   }
 
   public render = (): ReactNode => {
@@ -107,7 +117,11 @@ class STCards extends StreamlitComponentBase {
         </Card>
       )
     })
-    return <div style={{ display: "flex", flexWrap: "wrap" }}>{rows}</div>
+    return <>
+        {this.props.args.show_search? <Search placeholder="input search text"
+         allowClear onSearch={this.onSearch} style={{ width: "100%",  paddingTop: "1rem", paddingBottom: "1rem"}} size="large" />:null}
+        <div style={{ display: "flex", flexWrap: "wrap" }}>{rows}</div>
+    </>;
   }
 }
 
