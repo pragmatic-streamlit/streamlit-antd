@@ -51,6 +51,7 @@ def st_antd_cards(items: List[Item], *,
                 margin='15px',
                 video_volume=0.3,
                 show_search=False,
+                search_text=None,
                 key=None):
     for item in items:
         item.actions = item.actions or []
@@ -64,6 +65,7 @@ def st_antd_cards(items: List[Item], *,
         items=[asdict(item) for item in items],
         desc_max_len=desc_max_len,
         show_search=show_search,
+        search_text=search_text or '',
         key=key, default=None)
     return component_value
 
@@ -106,6 +108,8 @@ if _DEVELOP_MODE or os.getenv('DEBUG_ANTD_DEMO'):
         ) 
         for i in range(10)
     ]
-    clicked_event = st_antd_cards(items, width=width, height=height, show_search=True, key='demo')
+    clicked_event = st_antd_cards(items, width=width, height=height, show_search=True,
+                                  search_text='Docking',
+                                   key='demo')
     st.write("Click return: ")
     st.write(clicked_event)

@@ -51,7 +51,6 @@ class STCards extends StreamlitComponentBase {
   }
 
   onSearch = (value: string) => {
-    Streamlit.setComponentValue(value)
     Streamlit.setComponentValue({
       action: "search",
       payload: value,
@@ -119,7 +118,9 @@ class STCards extends StreamlitComponentBase {
     })
     return <>
         {this.props.args.show_search? <Search placeholder="input search text"
-         allowClear onSearch={this.onSearch} style={{ width: "100%",  paddingTop: "1rem", paddingBottom: "1rem"}} size="large" />:null}
+         allowClear onSearch={this.onSearch} style={{ width: "100%",  paddingTop: "1rem", paddingBottom: "1rem"}}
+         defaultValue={this.props.args.search_text}
+          size="large" />:null}
         <div style={{ display: "flex", flexWrap: "wrap" }}>{rows}</div>
     </>;
   }
