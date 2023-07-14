@@ -46,6 +46,7 @@ def st_antd_table(df, *, row_key=None,
         dynamic_pager_page=0,
         unsafe_html_columns=None,
         sticky=False,
+        ellipsis_config=None,
         scroll={ 'x': True },
         key=None):
     if columns:
@@ -99,6 +100,7 @@ def st_antd_table(df, *, row_key=None,
         show_pager=show_pager,
         color_backgroud=color_backgroud,
         scroll=scroll,
+        ellipsis_config=ellipsis_config,
         action_width=action_width, unsafe_html_columns=unsafe_html_columns, sticky=sticky, key=key, default=None)
     action_id = event and event.get('id')
     if action_id:
@@ -154,10 +156,10 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
         "avatar": f"<img width=\"100\" height=\"100\" src=\"https://openfiles.mlops.dp.tech/projects/launching/a12d15ff7b76432994d2cb81df28983a/home-3.png\" />",
         "age": 10 + i,
         "tags": "Apple, Google",
-        "address": f"Beijing no. {i}",
-        "address1": f"Beijing no. {i}",
-        "address2": f"Beijing no. {i}",
-        "address3": f"Beijing no. {i}",
+        "address": f"Beijing no. {i} aaaaaaa",
+        "address1": f"Beijing no. {i} bbbbbbbb",
+        "address2": f"Beijing no. {i} ccccccc",
+        "address3": f"Beijing no. {i} ddddddd",
         "address4": f"Beijing no. {i}",
         "address5": f"Beijing no. {i}",
         "address6": f"Beijing no. {i}",
@@ -187,6 +189,7 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
             expand_json=expand_json,
             show_pager=show_pager,
             batch_actions=['Batch Delete', 'Batch Mark'],
+            ellipsis_config={ 'address': 10, 'address1': 15, 'address2': 20, 'address3': 25 },
             actions_mapper=lambda x: ['Delete', 'Edit'] if x['age'] % 2==0 else ['View'], key='abc')
         st.write(event)
         if event and event['payload']['action'] in ('Delete', 'Batch Delete'):
