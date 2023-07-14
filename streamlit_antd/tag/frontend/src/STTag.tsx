@@ -50,7 +50,7 @@ class STTag extends StreamlitComponentBase<IState> {
   public render = (): ReactNode => {
   
     const handleClose = (removedTag: string) => {
-      const newTags = this.state.tags.filter((tag) => tag !== removedTag);
+      const newTags = this.state.tags.filter((tag: any) => tag !== removedTag);
       this.setState({tags: newTags}, () => {Streamlit.setComponentValue(this.state.tags)});
     };
   
@@ -92,7 +92,7 @@ class STTag extends StreamlitComponentBase<IState> {
     return (
       <Space size={[0, 8]} wrap>
         <Space size={[0, 8]} wrap>
-          {this.state.tags.map((tag, index) => {
+          {this.state.tags.map((tag: string, index: number) => {
             if (this.state.editInputIndex === index) {
               return (
                 <Input
