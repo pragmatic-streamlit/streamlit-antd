@@ -25,6 +25,7 @@ def st_antd_table(df, *, row_key=None,
         tags_columns=None,
         sorter_columns=None,
         searchable_columns=None,
+        ellipsis_column_configs=None,
         iframes_mapper=None,
         actions=None,
         actions_mapper=None,
@@ -44,6 +45,8 @@ def st_antd_table(df, *, row_key=None,
         dynamic_pager_total=0,
         dynamic_pager_page=0,
         unsafe_html_columns=None,
+        sticky=False,
+        scroll={ 'x': True },
         key=None):
     if columns:
         df = df[columns]
@@ -86,6 +89,7 @@ def st_antd_table(df, *, row_key=None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None,
         searchable_columns=searchable_columns or None, actions_in_row=bool(actions_mapper), iframe_height=iframe_height,
         expand_column=expand_column, default_expand_all_rows=default_expand_all_rows, iframes_in_row=bool(iframes_mapper),
+        ellipsis_column_configs=ellipsis_column_configs,
         rows_per_page=rows_per_page,
         compact_layout=compact_layout,
         expand_json=expand_json,
@@ -94,7 +98,8 @@ def st_antd_table(df, *, row_key=None,
         dynamic_pager_total=dynamic_pager_total,
         show_pager=show_pager,
         color_backgroud=color_backgroud,
-        action_width=action_width, unsafe_html_columns=unsafe_html_columns, key=key, default=None)
+        scroll=scroll,
+        action_width=action_width, unsafe_html_columns=unsafe_html_columns, sticky=sticky, key=key, default=None)
     action_id = event and event.get('id')
     if action_id:
         session_key = f'components/streamlit-antd/table/state/{key}/last_action_id'
@@ -138,7 +143,7 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
     if 'deleted' not in st.session_state:
         st.session_state.deleted = set()
 
-    func = st.selectbox('Demo', ['Dynamic Table', 'Table'])
+    func = st.selectbox('Demo', ['Table', 'Dynamic Table'])
     expand_json = st.checkbox('Expand Json')
     
     show_pager = st.checkbox('Show Pager', True)
@@ -173,6 +178,7 @@ if _DEVELOP_MODE or os.getenv('SHOW_TABLE_DEMO'):
         event = st_antd_table(data,
             hidden_columns=['a'],
             row_key='a',
+            sticky=False,
             unsafe_html_columns=['avatar'],
             tags_columns=['tags'],
             fixed_left_columns=['name'],

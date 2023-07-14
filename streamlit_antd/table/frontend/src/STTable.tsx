@@ -262,6 +262,7 @@ class STTable extends StreamlitComponentBase<State> {
       sorter_columns,
       searchable_columns,
       expand_column,
+      ellipsis_column_configs,
       default_expand_all_rows,
       iframes_in_row,
       iframe_height,
@@ -272,11 +273,11 @@ class STTable extends StreamlitComponentBase<State> {
       enable_dynamic_pager,
       dynamic_pager_total,
       unsafe_html_columns,
+      sticky = false,
+      scroll = { x: true },
     } = this.props.args
     let actions = this.props.args.actions
     const that = this
-
-    // console.log(8989898, columns)
 
     const { selectedRowKeys } = this.state
     const rowSelection = {
@@ -310,6 +311,22 @@ class STTable extends StreamlitComponentBase<State> {
         }
       }
     })
+
+    if (ellipsis_column_configs && typeof ellipsis_column_configs === 'object') {
+      columns.forEach((column: ColumnType<object>) => {
+        const currentEllipsis = ellipsis_column_configs[column.key as string]
+        if (
+          currentEllipsis &&
+          (
+            typeof currentEllipsis === 'boolean' ||
+            (typeof currentEllipsis === 'object' && typeof currentEllipsis.showTitle === 'boolean')
+          )
+        ) {
+          column.ellipsis = currentEllipsis
+        }
+      })
+    }
+
     if (actions || actions_in_row) {
       columns = columns.concat({
         title: "Action",
@@ -408,6 +425,7 @@ class STTable extends StreamlitComponentBase<State> {
         pager.onChange = this.onPagerChange.bind(this)
       }
     }
+
     return (
       <ConfigProvider
         theme={{
@@ -429,8 +447,8 @@ class STTable extends StreamlitComponentBase<State> {
           size={"large"}
           columns={columns}
           dataSource={data}
-          scroll={{ x: true }}
-          sticky
+          scroll={scroll}
+          sticky={sticky}
           expandable={
             expand_column || iframes_in_row
               ? {
