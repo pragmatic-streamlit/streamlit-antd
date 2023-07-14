@@ -85,7 +85,7 @@ class STTable extends StreamlitComponentBase<State> {
 
   searchInput?: InputRef
 
-  getColumnSearchProps = (dataIndex: string, linkable: boolean) => ({
+  getColumnSearchProps = (dataIndex: string, linkable: boolean, args: any) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -156,6 +156,14 @@ class STTable extends StreamlitComponentBase<State> {
       }
     },
     render: (text: string, record: any) => {
+      let current_text = text
+      const ellipsis_config = args && (args.ellipsis_config || {})
+      if (ellipsis_config[dataIndex]) {
+        const ellipsis = ellipsis_config[dataIndex]
+        if (typeof ellipsis === 'number' && text.length > ellipsis) {
+          current_text = text.slice(0, ellipsis) + '...'
+        }
+      }
       let x =
         this.state.searchedColumn && this.state.searchedColumn === dataIndex ? (
           <Highlighter
@@ -166,18 +174,12 @@ class STTable extends StreamlitComponentBase<State> {
           />
         ) : (
           <Tooltip placement="topLeft" title={text}>
-            {text}
+            {current_text}
           </Tooltip>
         )
       if (linkable) {
-        // eslint-disable-next-line
         x = (
-          <a
-            href="#"
-            onClick={this.handleAction("ClickLink", [record], dataIndex).bind(
-              this
-            )}
-          >
+          <a href="#" onClick={this.handleAction("ClickLink", [record], dataIndex).bind(this)} >
             {x}
           </a>
         )
@@ -297,7 +299,6 @@ class STTable extends StreamlitComponentBase<State> {
       }
       if (linkable_columns.includes(column.key as string)) {
         column.render = (text: string, record: any) => {
-          // eslint-disable-next-line
           return (
             <a
               href="#"
@@ -363,7 +364,8 @@ class STTable extends StreamlitComponentBase<State> {
             column,
             this.getColumnSearchProps(
               column.dataIndex as string,
-              linkable_columns.includes(column.key as string)
+              linkable_columns.includes(column.key as string),
+              this.props.args
             )
           )
         }
@@ -392,7 +394,6 @@ class STTable extends StreamlitComponentBase<State> {
       })
     }
     if (tags_columns) {
-      // eslint-disable-next-line
       columns.map((column: ColumnType<object>) => {
         if ((tags_columns as string[]).includes(column.key as string)) {
           column.render = (tags: string, record: any, index: Number) => {
@@ -425,7 +426,6 @@ class STTable extends StreamlitComponentBase<State> {
         pager.onChange = this.onPagerChange.bind(this)
       }
     }
-
     return (
       <ConfigProvider
         theme={{
