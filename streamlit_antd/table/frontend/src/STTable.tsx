@@ -205,7 +205,7 @@ class STTable extends StreamlitComponentBase<State> {
     this.setState({ searchText: "" })
   }
 
-  private handleAction(action: string, records: object[], column?: string) {
+  private handleAction(action: string, records: object[], column?: string, reserve_select?: boolean) {
     const that = this
     return function (e: React.MouseEvent<HTMLElement>) {
       e.stopPropagation()
@@ -218,7 +218,7 @@ class STTable extends StreamlitComponentBase<State> {
         },
       }
       Streamlit.setComponentValue(event)
-      that.setState({ selectedRowKeys: [] })
+      reserve_select || that.setState({ selectedRowKeys: [] })
     }
   }
 
@@ -526,7 +526,7 @@ class STTable extends StreamlitComponentBase<State> {
                           <Button
                             key={`${i}`}
                             onClick={that
-                              .handleAction(action, records)
+                              .handleAction(action, records, undefined, true)
                               .bind(that)}
                           >
                             {action}

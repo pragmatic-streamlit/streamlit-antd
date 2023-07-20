@@ -84,7 +84,6 @@ def st_antd_table(df, *, row_key=None,
             'fixed': fixed,
         }
         columns.append(column)
-        
     event = _component_func(data=data, columns=columns, actions=actions or None,
         row_key=row_key, min_height=min_height, tags_columns=tags_columns or None, sorter_columns=sorter_columns or None,
         linkable_columns=linkable_columns or [], batch_actions=batch_actions or None,
