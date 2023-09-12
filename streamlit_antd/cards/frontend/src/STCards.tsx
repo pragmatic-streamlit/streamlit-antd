@@ -113,7 +113,7 @@ class STCards extends StreamlitComponentBase {
               this.props.args.desc_max_len
             )}
           />
-          {item.email? <p style={{marginBottom: "-20px", marginTop: "1rem", color: "gray", textAlign: "center"}}>© {item.email}</p>:null}
+          {item.email? <p style={{marginBottom: "-20px", marginTop: "1rem", color: "gray", textAlign: "center"}}>✉ {item.email}</p>:null}
         </Card>
       )
     })
