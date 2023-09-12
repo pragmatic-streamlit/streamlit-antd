@@ -3,7 +3,7 @@ import streamlit.components.v1 as components
 from dataclasses import dataclass, asdict, field
 from typing import List
 
-_DEVELOP_MODE = os.getenv('DEVELOP_MODE')
+_DEVELOP_MODE = os.getenv('STREAMLIT_ANTD_DEVELOP_MODE') == 'true'
 
 
 if _DEVELOP_MODE:

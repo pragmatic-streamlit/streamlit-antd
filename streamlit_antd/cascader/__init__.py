@@ -3,8 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from typing import Any
 
-_DEVELOP_MODE = os.getenv('DEVELOP_MODE')
-# _DEVELOP_MODE = True
+_DEVELOP_MODE = os.getenv('STREAMLIT_ANTD_DEVELOP_MODE') == 'true'
 
 
 if _DEVELOP_MODE:

@@ -3,7 +3,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from typing import Union, Dict, List, Tuple
 
-_DEVELOP_MODE = os.getenv('DEVELOP_MODE') or os.getenv('ST_ANTD_DEVELOP_MODE')
+_DEVELOP_MODE = os.getenv('STREAMLIT_ANTD_DEVELOP_MODE') == 'true'
 
 if _DEVELOP_MODE:
     _component_func = components.declare_component(
