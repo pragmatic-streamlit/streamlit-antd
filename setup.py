@@ -2,13 +2,13 @@ import setuptools
 
 setuptools.setup(
     name="streamlit-antd",
-    version="0.8.2",
+    version="0.8.3",
     author="mapix",
     author_email="mapix.me@gmail.com",
     description="",
     long_description="",
     long_description_content_type="text/plain",
-    url="https://github.com/mapix/streamlit-antd",
+    url="https://github.com/pragmatic-streamlit/streamlit-antd",
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=[],
